@@ -105,7 +105,7 @@ int main(int argc, const char * argv[]) {
     
     Sudoku game( gRenderer, gwindow.getFont(), SCREEN_HEIGHT,SCREEN_HEIGHT);
     
-    buildFromFile( game, std::string("Puzzles/Hard/hard1.txt"));
+    buildFromFile( game, std::string("Puzzles/Hard/hard3.txt"));
     game.solveSudoku();
     game.displaySolution();
     if( !loadMedia()){
