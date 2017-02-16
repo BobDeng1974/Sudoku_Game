@@ -31,6 +31,7 @@ class Cell
         bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
 
         void setFocused(bool state);
+        void setBlocked(bool isBlocked);
     
         bool handleFocusEvent( SDL_Event* e);
         void handleInputEvent( SDL_Event* e);
@@ -54,7 +55,7 @@ class Cell
         std::bitset<9> getPossibleValues() const;
         bool isQueued() const;
         State getMode() const;
-
+    
 
     
     private:
@@ -73,6 +74,7 @@ class Cell
     
     
         bool isFocused_ = false;
+        bool isBlocked_ = false;
     
         // Game Logic Variabless
         Coordinates coords_;

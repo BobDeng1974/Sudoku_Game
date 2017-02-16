@@ -168,6 +168,7 @@ bool Sudoku::insertCellValue(int row, int col, int value)
 {
     if(!isValidInsertion(row, col, value)) return false;
     board_[row][col].setValue(value);
+    board_[row][col].setBlocked(true);
     return true;
 }
 

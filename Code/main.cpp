@@ -63,12 +63,8 @@ bool loadMedia()
     return success;
 }
 
-bool buildFromFile( Sudoku &sudoku)
+bool buildFromFile( Sudoku &sudoku, std::string filename)
 {
-    //std::cout << "Please insert filename\n";
-    //std::string filename;
-    //std::cin >> filename;
-    std::string filename("Puzzles/Hard/hard1.txt");
     std::ifstream f_input;
     f_input.open(filename);
     if (!f_input.is_open()) return false;
@@ -109,7 +105,7 @@ int main(int argc, const char * argv[]) {
     
     Sudoku game( gRenderer, gwindow.getFont(), SCREEN_HEIGHT,SCREEN_HEIGHT);
     
-    buildFromFile( game);
+    buildFromFile( game, std::string("Puzzles/Hard/hard1.txt"));
     game.solveSudoku();
     game.displaySolution();
     if( !loadMedia()){

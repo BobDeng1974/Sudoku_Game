@@ -38,7 +38,8 @@ void Cell::render()
 {
     SDL_Rect fillRect = { x_, y_, size_, size_ };
     if( isFocused_)SDL_SetRenderDrawColor( renderer_, 0x00, 0xFF, 0x00, 0xFF );
-    else SDL_SetRenderDrawColor( renderer_, 0xFF, 0x00, 0x00, 0xFF );
+    else if ( isBlocked_) SDL_SetRenderDrawColor( renderer_, 0x99, 0x99, 0x99, 0xFF );
+    else SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderFillRect( renderer_, &fillRect );
     
     if(value_!=0){
@@ -58,7 +59,7 @@ bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
     free();
     
     //Render text surface
-    SDL_Surface* textSurface = TTF_RenderText_Solid( font_, textureText.c_str(), textColor );
+    SDL_Surface* textSurface = TTF_RenderText_Blended( font_, textureText.c_str(), textColor );
     if( textSurface != NULL )
     {
         //Create texture from surface pixels
@@ -183,7 +184,7 @@ void Cell::free()
 
 void Cell::setFocused(bool state){ isFocused_ = state;}
 
-
+void Cell::setBlocked(bool isBlocked){ isBlocked_ = isBlocked; }
 
 
 // Game Logic Funtions
