@@ -64,8 +64,7 @@ class Cell
         SDL_Texture* mTexture=nullptr;
     
         // GUI position and size
-        int x_;
-        int y_;
+        SDL_Point anchorPoint;
         int size_;
     
         // Board coordinates

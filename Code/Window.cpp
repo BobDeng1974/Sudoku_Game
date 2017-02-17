@@ -69,7 +69,11 @@ void Window::clearScreen()
     SDL_RenderClear( renderer_ );
 }
 
-
+void Window::updateScreen()
+{
+    //Update screen
+    SDL_RenderPresent( renderer_ );
+}
 
 bool Window::initPNG()
 {

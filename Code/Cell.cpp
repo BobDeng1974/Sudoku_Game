@@ -8,25 +8,20 @@
 
 #include "Cell.hpp"
 
+
 Cell::Cell(){}
 
 Cell::Cell(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int row, int col)
 {
-    this->renderer_ = renderer;
-    this->font_ = font;
-    this->x_ = x;
-    this->y_ = y;
-    this->size_ = size;
-    this->row_ = row;
-    this->col_ = col;
+    setValues(renderer, font, x, y, size, row, col);
 }
 
 void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int row, int col)
 {
     this->renderer_ = renderer;
     this->font_ = font;
-    this->x_ = x;
-    this->y_ = y;
+    this->anchorPoint.x = x;
+    this->anchorPoint.y = y;
     this->size_ = size;
     this->row_ = row;
     this->col_ = col;
@@ -36,7 +31,7 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
 
 void Cell::render()
 {
-    SDL_Rect fillRect = { x_, y_, size_, size_ };
+    SDL_Rect fillRect = { anchorPoint.x, anchorPoint.y, size_, size_ };
     if( isFocused_)SDL_SetRenderDrawColor( renderer_, 0x00, 0xFF, 0x00, 0xFF );
     else if ( isBlocked_) SDL_SetRenderDrawColor( renderer_, 0x99, 0x99, 0x99, 0xFF );
     else SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -46,7 +41,7 @@ void Cell::render()
         SDL_Color textColor = { 0, 0, 0, 0xFF };
         loadFromRenderedText( std::to_string(value_) , textColor );
         //Set rendering space and render to screen
-        SDL_Rect renderQuad = { x_ + size_/4, y_, size_/2, size_ };
+        SDL_Rect renderQuad = { anchorPoint.x + size_/4, anchorPoint.y, size_/2, size_ };
         SDL_RenderCopy(renderer_, mTexture, NULL, &renderQuad);
     }
     
@@ -90,6 +85,7 @@ bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
 
 bool Cell::handleFocusEvent(SDL_Event* e)
 {
+    if( isBlocked_) return false;
     //If mouse event happened
     if( e->type == SDL_MOUSEBUTTONDOWN)
     {
@@ -101,22 +97,22 @@ bool Cell::handleFocusEvent(SDL_Event* e)
         bool inside = true;
         
         //Mouse is left of the button
-        if( x < x_ )
+        if( x < anchorPoint.x )
         {
             inside = false;
         }
         //Mouse is right of the button
-        else if( x > x_ + size_ )
+        else if( x > anchorPoint.x + size_ )
         {
             inside = false;
         }
         //Mouse above the button
-        else if( y < y_ )
+        else if( y < anchorPoint.y )
         {
             inside = false;
         }
         //Mouse below the button
-        else if( y > y_ + size_ )
+        else if( y > anchorPoint.y + size_ )
         {
             inside = false;
         }
@@ -166,6 +162,9 @@ void Cell::handleInputEvent(SDL_Event *e)
             
         case SDLK_9:    // pressed 9
             value_ = 9;
+            break;
+        case SDLK_BACKSPACE:    //backspace -> erase value
+            value_ = 0;
             break;
     }
 }

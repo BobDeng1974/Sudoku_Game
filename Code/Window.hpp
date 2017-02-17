@@ -30,6 +30,9 @@ class Window
         // Clear screen
         void clearScreen();
     
+        // Update screen
+        void updateScreen();
+    
         // Getters
         SDL_Renderer* getRenderer() const;
         TTF_Font* getFont() const;
