@@ -22,8 +22,7 @@ class Window
         ~Window();
     
         // initialize support libraries
-        bool initPNG();
-        bool initTTF();
+        virtual bool init();
     
         bool loadFont( std::string path);
     
@@ -38,6 +37,9 @@ class Window
         TTF_Font* getFont() const;
     
     protected:
+        bool initPNG();
+        bool initTTF();
+
 
     
     
@@ -47,6 +49,7 @@ class Window
         int bgR_;
         int bgG_;
         int bgB_;
+        std::string title;
     
         SDL_Window* window_ = nullptr;
     

@@ -14,8 +14,25 @@ Window::Window(int windowWidth, int windowHeight, const char* windowTitle, int b
     this->bgR_ = bgR;
     this->bgG_ = bgG;
     this->bgB_ = bgB;
+    this->title = windowTitle;
+}
+
+Window::~Window()
+{
+    //Destroy window
+    SDL_DestroyRenderer( renderer_ );
+    SDL_DestroyWindow( window_ );
+    window_ = NULL;
+    renderer_ = NULL;
     
-    bool success;
+    //Quit SDL subsystems
+    if( isPNGActive_)IMG_Quit();
+    SDL_Quit();
+}
+
+bool Window::init()
+{
+    bool success = true;
     
     if(SDL_Init(SDL_INIT_VIDEO) <0){
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
@@ -25,10 +42,10 @@ Window::Window(int windowWidth, int windowHeight, const char* windowTitle, int b
         //Set texture filtering to linear
         if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
         {
-            printf( "Warning: Linear texture filtering not enabled!" );
+            std::cerr << "Warning: Linear texture filtering not enabled!\n";
         }
         
-        window_ = SDL_CreateWindow(windowTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth_, screenHeight_, SDL_WINDOW_SHOWN);
+        window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth_, screenHeight_, SDL_WINDOW_SHOWN);
         if(window_==nullptr){
             std::cerr <<  "Window could not be created! SDL_Error: "<< SDL_GetError() << std::endl;
             success = false;
@@ -43,22 +60,14 @@ Window::Window(int windowWidth, int windowHeight, const char* windowTitle, int b
             else{
                 //Initialize renderer color
                 SDL_SetRenderDrawColor(renderer_, 0xFF, 0xFF, 0xFF, 0xFF);
+                
+                if( !initPNG()) success = false;
+                
+                if( !initTTF()) success = false;
             }
         }
     }
-}
-
-Window::~Window()
-{
-    //Destroy window
-    SDL_DestroyRenderer( renderer_ );
-    SDL_DestroyWindow( window_ );
-    window_ = NULL;
-    renderer_ = NULL;
-    
-    //Quit SDL subsystems
-    if( isPNGActive_)IMG_Quit();
-    SDL_Quit();
+    return success;
 }
 
 
@@ -91,7 +100,6 @@ bool Window::initPNG()
 bool Window::initTTF()
 {
     if( isTTFActive_) return true;
-    
     //Initialize SDL_ttf
     if( TTF_Init() == -1 )
     {
