@@ -17,15 +17,22 @@ class Button
 {
     public:
         // Constructors with renderer required
-        Button(SDL_Renderer* renderer);
-        Button(SDL_Renderer* renderer, int x, int y);
+        Button(SDL_Renderer* renderer,TTF_Font* font);
+        Button(SDL_Renderer* renderer,TTF_Font* font, int x, int y);
     
         // set 2D position of button
         void setPosition( int x, int y);
     
-        // handle event on button
-        virtual void handleEvent( SDL_Event *e) = 0;
+        // set button's text
+        bool setText(std::string text);
     
+        // set Text's color
+        void setTextColor(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+    
+        // handle event on button
+        virtual bool handleEvent( SDL_Event *e) = 0;
+    
+        // interface render
         virtual void render() = 0;
     
     protected:
@@ -34,9 +41,15 @@ class Button
     
         // Window Renderer
         SDL_Renderer* renderer_;
+        // Text font
+        TTF_Font* font_;
     
         // Button Texture
         Texture* texture_=nullptr;
+    
+        // Text color
+        SDL_Color textColor = { 0, 0, 0, 0xFF };
+
 };
 
 #endif /* Button_hpp */

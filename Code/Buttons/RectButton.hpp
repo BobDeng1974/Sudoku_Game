@@ -16,11 +16,11 @@
 class RectButton : public Button
 {
     public:
-        RectButton(SDL_Renderer* renderer);
-        RectButton(SDL_Renderer* renderer, int x, int y, int width, int height);
+        RectButton(SDL_Renderer* renderer, TTF_Font* font);
+        RectButton(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int width, int height);
     
         // handle Events
-        void handleEvent(SDL_Event *e);
+        bool handleEvent(SDL_Event *e);
     
         // render button
         void render();
@@ -28,6 +28,8 @@ class RectButton : public Button
     protected:
         int width_;
         int height_;
+    
+        bool isClicked_ = false;
   
 };
 

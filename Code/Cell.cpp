@@ -20,8 +20,8 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
 {
     this->renderer_ = renderer;
     this->font_ = font;
-    this->anchorPoint.x = x;
-    this->anchorPoint.y = y;
+    this->anchorPoint_.x = x;
+    this->anchorPoint_.y = y;
     this->size_ = size;
     this->row_ = row;
     this->col_ = col;
@@ -31,7 +31,7 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
 
 void Cell::render()
 {
-    SDL_Rect fillRect = { anchorPoint.x, anchorPoint.y, size_, size_ };
+    SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, size_, size_ };
     if( isFocused_)SDL_SetRenderDrawColor( renderer_, 0x00, 0xFF, 0x00, 0xFF );
     else if ( isBlocked_) SDL_SetRenderDrawColor( renderer_, 0x99, 0x99, 0x99, 0xFF );
     else SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );
@@ -41,7 +41,7 @@ void Cell::render()
         SDL_Color textColor = { 0, 0, 0, 0xFF };
         loadFromRenderedText( std::to_string(value_) , textColor );
         //Set rendering space and render to screen
-        SDL_Rect renderQuad = { anchorPoint.x + size_/4, anchorPoint.y, size_/2, size_ };
+        SDL_Rect renderQuad = { anchorPoint_.x + size_/4, anchorPoint_.y, size_/2, size_ };
         SDL_RenderCopy(renderer_, mTexture, NULL, &renderQuad);
     }
     
@@ -97,22 +97,22 @@ bool Cell::handleFocusEvent(SDL_Event* e)
         bool inside = true;
         
         //Mouse is left of the button
-        if( x < anchorPoint.x )
+        if( x < anchorPoint_.x )
         {
             inside = false;
         }
         //Mouse is right of the button
-        else if( x > anchorPoint.x + size_ )
+        else if( x > anchorPoint_.x + size_ )
         {
             inside = false;
         }
         //Mouse above the button
-        else if( y < anchorPoint.y )
+        else if( y < anchorPoint_.y )
         {
             inside = false;
         }
         //Mouse below the button
-        else if( y > anchorPoint.y + size_ )
+        else if( y > anchorPoint_.y + size_ )
         {
             inside = false;
         }

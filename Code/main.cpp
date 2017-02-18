@@ -22,49 +22,6 @@ const int SCREEN_HEIGHT = 480;
 #include "Buttons/RectButton.hpp"
 
 
-SDL_Texture* gTexture = nullptr;
-
-SDL_Renderer* gRenderer=nullptr;
-
-SDL_Texture* loadTexture( std::string path)
-{
-    //The final optimized image
-    SDL_Texture* newTexture = NULL;
-    
-    // Load image at specified path
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
-    if( loadedSurface == nullptr){
-        std::cerr << "Unable to load image " << path << " ! SDL Error: " << SDL_GetError() << std::endl;
-    }
-    else{
-        // Convert Surface to Screen Format
-        newTexture = SDL_CreateTextureFromSurface(gRenderer, loadedSurface);
-        if( newTexture == nullptr){
-            std::cerr << "Unable to create texture from " << path << " ! SDL Error: " <<SDL_GetError() << std::endl;
-        }
-        // Free initial surface
-        SDL_FreeSurface(loadedSurface);
-    }
-    return newTexture;
-}
-
-
-bool loadMedia()
-{
-    //Loading success flag
-    bool success = true;
-    
-    //Load PNG texture
-    gTexture = loadTexture( "Images/texture.png" );
-    if( gTexture == NULL )
-    {
-        printf( "Failed to load texture image!\n" );
-        success = false;
-    }
-    
-    return success;
-}
-
 bool buildFromFile( Sudoku &sudoku, std::string filename)
 {
     std::ifstream f_input;
@@ -84,9 +41,9 @@ bool buildFromFile( Sudoku &sudoku, std::string filename)
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
         ss >> value;
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
-
+        
         if(!sudoku.insertCellValue(row - '1',  col - 'A', value - '0')){
-                return false;
+            return false;
         }
     }
     f_input.close();
@@ -94,20 +51,29 @@ bool buildFromFile( Sudoku &sudoku, std::string filename)
 }
 
 
+std::vector<Button*> loadButtons(SDL_Renderer* renderer, TTF_Font* font){
+    std::vector<Button*> vector;
+    RectButton* newButton;
+    
+    newButton = new RectButton(renderer , font, 520, 100, 100,50);
+    newButton->setText("Verify");
+    vector.push_back(newButton);
+    
+    return vector;
+}
+
+
 
 int main(int argc, const char * argv[]) {
-   
+    
     Window gwindow(SCREEN_WIDTH, SCREEN_HEIGHT, "My fun project!");
     
     gwindow.initTTF();
     gwindow.initPNG();
     gwindow.loadFont("Images/font2.ttf");
-    gRenderer = gwindow.getRenderer();
+    SDL_Renderer* gRenderer = gwindow.getRenderer();
     
-    std::vector<Button*> listButtons;
-    
-    listButtons.push_back( new RectButton(gRenderer ,520, 100, 100,50));
-    
+    std::vector<Button*> listButtons(loadButtons(gRenderer, gwindow.getFont()));
     
     
     
@@ -115,41 +81,34 @@ int main(int argc, const char * argv[]) {
     
     buildFromFile( game, std::string("Puzzles/Hard/hard3.txt"));
     game.solveSudoku();
-    //game.displaySolution();
-    if( !loadMedia()){
-        std::cout << "Failed to load media!\n";
-    }else{
-        // User wants to Quit
-        bool quit = false;
-        
-        // Event Handler
-        SDL_Event e;
-        
-        while( !quit){
-            while( SDL_PollEvent( &e) != 0 ){
-                if( e.type == SDL_QUIT){
-                    quit = true;
-                }
-                else{
-                    game.handleEvent(&e);
-                    for( Button* button: listButtons) button->handleEvent(&e);
-                }
+    
+    // User wants to Quit
+    bool quit = false;
+    
+    // Event Handler
+    SDL_Event e;
+    
+    while( !quit){
+        while( SDL_PollEvent( &e) != 0 ){
+            if( e.type == SDL_QUIT){
+                quit = true;
             }
-            
-            
-            gwindow.clearScreen();
-            
-            game.render();
-            for( Button* button: listButtons) button->handleEvent(&e);
-
-            
-            gwindow.updateScreen();
-                    
+            else{
+                game.handleEvent(&e);
+                for( Button* button: listButtons) button->handleEvent(&e);
+            }
         }
+        
+        
+        gwindow.clearScreen();
+        
+        game.render();
+        for( Button* button: listButtons) button->render();
+        
+        
+        gwindow.updateScreen();
+        
     }
-
-    
-    
     
     return 0;
 }
