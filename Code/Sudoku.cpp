@@ -161,6 +161,35 @@ void Sudoku::handleEvent(SDL_Event *e)
 }
 
 
+bool Sudoku::buildFromFile( std::string path)
+{
+    std::ifstream f_input;
+    f_input.open(path);
+    if (!f_input.is_open()) return false;
+    
+    std::string line;
+    while ( std::getline(f_input,line) ) {
+        
+        std::stringstream ss(line);
+        
+        bool hasFailed=false;
+        char row, col, value;
+        ss >> row;
+        if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') )  hasFailed=true;
+        ss >> col;
+        if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
+        ss >> value;
+        if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
+        
+        if(!insertCellValue(row - '1',  col - 'A', value - '0')){
+            return false;
+        }
+    }
+    f_input.close();
+    return true;
+}
+
+
 
 // Game Logic
 

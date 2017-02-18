@@ -19,9 +19,12 @@
 #include <unordered_map>
 #include <array>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 #include "Cell.hpp"
 #include "SodukuSolver.hpp"
+
 
 
 #define HORIZONTAL_AXIS "     A   B   C   D   E   F   G   H   I  "
@@ -40,7 +43,7 @@ class Sudoku
         //Game Functions
         bool insertCellValue(int row, int col, int value);
         virtual bool solveSudoku();
-
+        bool buildFromFile(std::string path);
     
     private:
         static const int thickLineSize=4;
