@@ -36,13 +36,13 @@ void GameScreen::start()
                 quit = true;
             }
             else{
-                if(isPlaying){
+                if(isPlaying_){
                     // Forward events to components and store answers (Handlers) onto queue
                     handlerQueue_.push(sudoku_->handleEvent(&e));
                     for( Button* button: listButtons) handlerQueue_.push(button->handleEvent(&e));
                 }
                 else{
-                    for( Button* button: difficultyPickerButtons) handlerQueue_.push(button->handleEvent(&e));
+                    for( Button* button: difficultyPickerButtons_) handlerQueue_.push(button->handleEvent(&e));
                 }
             }
         }
@@ -84,8 +84,8 @@ bool GameScreen::init()
         success = false;
     }
 
-    pickingText = new Texture(renderer_,font_);
-    pickingText->loadFromRenderedText("Choose the difficulty:", textColor);
+    pickingText_ = new Texture(renderer_,font_);
+    pickingText_->loadFromRenderedText("Choose the difficulty:", textColor_);
     
     sudoku_ = new Sudoku( renderer_, font_, windowWidth_,windowHeight_);
 
@@ -122,10 +122,10 @@ bool GameScreen::loadButtons(){
     newButton->setCallbackEvent(Handler::EVENT_RESET);
     listButtons.push_back(newButton);
     
-    // Reset Button
-    newButton = new RectButton(renderer_ , font_, 520, 200, buttonWidth_, buttonHeight_);
-    newButton->setText("Reset");
-    newButton->setCallbackEvent(Handler::EVENT_RESET);
+    // New Game Button
+    newButton = new RectButton(renderer_ , font_, 520, 300, buttonWidth_, buttonHeight_);
+    newButton->setText("New Game");
+    newButton->setCallbackEvent(Handler::EVENT_NEWGAME);
     listButtons.push_back(newButton);
 
     
@@ -136,31 +136,31 @@ bool GameScreen::loadButtons(){
     newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2), buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_EASY);
     newButton->setText("Easy");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons.push_back(newButton);
+    difficultyPickerButtons_.push_back(newButton);
     
     // Medium Button
     newButton = new SelectorButton(renderer_ , font_, diff_x, diff_y + (buttonHeight_*3/2)*2, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_MEDIUM);
     newButton->setText("Medium");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons.push_back(newButton);
+    difficultyPickerButtons_.push_back(newButton);
     
     // Hard Button
     newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*3, buttonWidth_*2, buttonHeight_ , Difficulty::DIFFICULTY_HARD);
     newButton->setText("Hard");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons.push_back(newButton);
+    difficultyPickerButtons_.push_back(newButton);
     
     // Very Hard Button
     newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*4, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_VERYHEARD);
     newButton->setText("Very Hard");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons.push_back(newButton);
+    difficultyPickerButtons_.push_back(newButton);
     
     // Custom Button
     newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*5, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_CUSTOM);
     newButton->setText("Custom");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons.push_back(newButton);
+    difficultyPickerButtons_.push_back(newButton);
 
     return true;
 }
@@ -178,7 +178,7 @@ bool GameScreen::processHandlers()
         switch (handler.getEvent())
         {
             case Handler::EVENT_VERIFY:
-                isVerify = !isVerify;
+                isVerify_ = !isVerify_;
                 success = true;
                 break;
                 
@@ -192,8 +192,12 @@ bool GameScreen::processHandlers()
                 for( Button* button: listButtons) button->reset();
                 break;
                 
+            case Handler::EVENT_NEWGAME:
+                isPlaying_ = false;
+                break;
+                
             case Handler::EVENT_PICKER:
-                if( !isPlaying){
+                if( !isPlaying_){
                     success = loadPickedPuzzle( handler.getIntExtra());
                 }
                 break;
@@ -213,11 +217,11 @@ void GameScreen::render()
     window_->clearScreen();
     
     // Render Elements
-    if( isPlaying)
-        sudoku_->render(isVerify);  // Render sudoku if playing
+    if( isPlaying_)
+        sudoku_->render(isVerify_);  // Render sudoku if playing
     else{
-        pickingText->render((windowWidth_*3/4)/2 - (pickingText->getWidth()/2), ( windowHeight_ - (buttonHeight_*3/2)*6 )/2);
-        for( Button* button: difficultyPickerButtons) button->render(); // else render the picking buttons
+        pickingText_->render((windowWidth_*3/4)/2 - (pickingText_->getWidth()/2), ( windowHeight_ - (buttonHeight_*3/2)*6 )/2);
+        for( Button* button: difficultyPickerButtons_) button->render(); // else render the picking buttons
     }
     
     // Render options buttons
@@ -238,34 +242,38 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
     
     switch (difficulty) {
         case DIFFICULTY_EASY:
+            filename_ ="Puzzles/Easy/sudoku1.txt";
             sudoku_->reset();
-            sudoku_->buildFromFile("Puzzles/Easy/sudoku1.txt");
+            sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
-            isPlaying = true;
+            isPlaying_ = true;
             success = true;
             break;
             
         case DIFFICULTY_MEDIUM:
+            filename_= "Puzzles/Medium/Medium1.txt";
             sudoku_->reset();
-            sudoku_->buildFromFile("Puzzles/Medium/Medium1.txt");
+            sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
-            isPlaying = true;
+            isPlaying_ = true;
             success = true;
             break;
             
         case DIFFICULTY_HARD:
+            filename_ = "Puzzles/Hard/hard1.txt";
             sudoku_->reset();
-            sudoku_->buildFromFile("Puzzles/Hard/hard1.txt");
+            sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
-            isPlaying = true;
+            isPlaying_ = true;
             success = true;
             break;
             
         case DIFFICULTY_VERYHEARD:
+            filename_ = "Puzzles/Hard/hard2.txt";
             sudoku_->reset();
-            sudoku_->buildFromFile("Puzzles/Hard/hard2.txt");
+            sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
-            isPlaying = true;
+            isPlaying_ = true;
             success = true;
             break;
             

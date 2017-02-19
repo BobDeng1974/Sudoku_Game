@@ -74,15 +74,15 @@ class GameScreen
         bool hasInitiated=false;
     
         //Verify Mode active
-        bool isVerify=false;
+        bool isVerify_ = false;
     
         // Puzzle Picking Variables
-        bool isPlaying=false;           // User is Playing Puzzle
-        Texture* pickingText = nullptr; // Texture with text for picking
-        std::vector<Button*> difficultyPickerButtons;  // list with buttons for difficulty picking
+        bool isPlaying_ = false;           // User is Playing Puzzle
+        Texture* pickingText_ = nullptr; // Texture with text for picking
+        std::vector<Button*> difficultyPickerButtons_;  // list with buttons for difficulty picking
         int buttonWidth_ = 100;  // Button Width
         int buttonHeight_ = 50;  // Button Height
-        SDL_Color textColor = { 0, 0, 0, 0xFF }; // text color
+        SDL_Color textColor_ = { 0, 0, 0, 0xFF }; // text color
         enum Difficulty { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, DIFFICULTY_VERYHEARD, DIFFICULTY_CUSTOM};
     
         // Sudoku File Name
