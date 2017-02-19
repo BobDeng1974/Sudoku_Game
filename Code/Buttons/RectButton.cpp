@@ -55,7 +55,7 @@ Handler RectButton::handleEvent(SDL_Event *e)
         
         if(inside){
             isClicked_ = !isClicked_;
-            handler.setEvent(Handler::EVENT_VERIFY);
+            handler.setEvent(event_);
         }
     }
     return handler;
@@ -77,3 +77,6 @@ void RectButton::render()
         texture_->render( anchorPoint_.x + (width_ - texture_->getWidth())/2, anchorPoint_.y + (height_ - texture_->getHeight())/2);
 
 }
+
+// Sets Button event to be set on clicked
+void RectButton::setCallbackEvent(Handler::Event event){ this->event_ = event; }

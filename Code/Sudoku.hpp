@@ -38,37 +38,48 @@ class Sudoku
     public:
         Sudoku(SDL_Renderer* renderer, TTF_Font* font,  int screenWidth, int screenHeight);
 
-        void render();
+        // Render sudoku component
+        void render(bool modeVerify=false);
     
+        // Handle event on sudoku board
         Handler handleEvent( SDL_Event* e);
-        
+    
+        // Reset board
+        void reset();
+    
         //Game Functions
         bool insertCellValue(int row, int col, int value);
         virtual bool solveSudoku();
         bool buildFromFile(std::string path);
     
+    
+    
     private:
+        // Board thick line size
         static const int thickLineSize=4;
     
+        // Sudoku Screen Position
         int xOffset_;
         int yOffset_;
         int boardWidth_;
         int boardHeight;
         int cellSize_;
     
+        // SDL variables
         SDL_Renderer* renderer_ = nullptr;
         TTF_Font* font_ = nullptr;
     
+        // Game board and board with solution
         std::vector<Cell> board_;
         std::vector<Cell> solution_;
     
+        // Pointer to clicked cell
         Cell *focusedCell = nullptr;
-    
+   
+        // Creates the board (all cells)
         void createBoard();
     
-        //Solving Logic
-        int boardSize_=9;
-    
+        // Verifies if an insertion is valid
         bool isValidInsertion(int row, int col, int value) const;
     
 

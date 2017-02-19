@@ -26,11 +26,19 @@ class RectButton : public Button
         // render button
         void render();
     
+        // Sets Button functionality
+        void setCallbackEvent( Handler::Event event);
+    
+        // reset button state
+        void reset();
+    
     protected:
         int width_;
         int height_;
     
         bool isClicked_ = false;
+    
+        Handler::Event event_ = Handler::EVENT_IGNORE;
   
 };
 

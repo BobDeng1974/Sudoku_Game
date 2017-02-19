@@ -39,6 +39,9 @@ class GameScreen
         //Process Handlers
         virtual bool processHandlers();
     
+        // Render screen
+        virtual void render();
+    
     
     private:
         // Screen Size

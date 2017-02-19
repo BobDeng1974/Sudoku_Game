@@ -42,23 +42,18 @@ void Sudoku::createBoard()
 }
 
 
-void Sudoku::render()
+void Sudoku::render(bool modeVerify)
 {
     for (int i=0; i<9; i++){
         for (int j=0; j<9; j++){
-            board_[(i*9) + j].render();
+            board_[(i*9) + j].render( modeVerify, solution_[(i*9) + j].getValue());
         }
     }
     
-    //Draw blue horizontal line
+    
     SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xFF );
     
-    // Outer Borders
-    
-    //SDL_Rect fillRect = { xOffset_, , SCREEN_HEIGHT -(2*13), 4 };
-    //SDL_RenderFillRect( renderer_, &fillRect );
-  
-    int diviserSpace=0;
+     int diviserSpace=0;
     
     // Draw vertical lines
     for (int i =0; i<10; i++){
@@ -186,9 +181,6 @@ bool Sudoku::buildFromFile( std::string path)
 }
 
 
-
-// Game Logic
-
 bool Sudoku::insertCellValue(int row, int col, int value)
 {
     if(!isValidInsertion(row, col, value)) return false;
@@ -199,11 +191,11 @@ bool Sudoku::insertCellValue(int row, int col, int value)
 
 bool Sudoku::isValidInsertion(int row, int col, int value) const
 {
-    for(int i=0; i< boardSize_; i++){
+    for(int i=0; i< boardWidth_; i++){
         if( board_[(row*9)+i].getValue()==value) return false;
     }
     
-    for(int i=0; i< boardSize_; i++){
+    for(int i=0; i< boardHeight; i++){
         if( board_[(i*9)+col].getValue()==value) return false;
     }
     
@@ -223,6 +215,16 @@ bool Sudoku::solveSudoku()
     solution_ = solver.solvePuzzle(board_);
     
     return true;
+}
+
+
+void Sudoku::reset()
+{
+    for (int i=0; i<9; i++){
+        for (int j=0; j<9; j++){
+            board_[(i*9) + j].reset();
+        }
+    }
 }
 
 

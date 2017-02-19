@@ -19,12 +19,13 @@ GameScreen::GameScreen(int windowWidth, int windowHeight)
 void GameScreen::start()
 {
     if( !hasInitiated) return;
+    render();
     
     // User wants to Quit
     bool quit = false;
     
     // Required to update window
-    bool update = false;
+    bool update = true;
     
     // Event Handler
     SDL_Event e;
@@ -44,15 +45,7 @@ void GameScreen::start()
         update = processHandlers();
         
         if( update){
-            // Clear window
-            window_->clearScreen();
-            
-            // Render sudoky and Buttons
-            sudoku_->render();
-            for( Button* button: listButtons) button->render();
-            
-            // Update Screen
-            window_->updateScreen();
+            render();
         }
     }
 
@@ -109,8 +102,16 @@ bool GameScreen::loadButtons(){
     
     RectButton* newButton;
     
+    // Verify Button
     newButton = new RectButton(renderer_ , font_, 520, 100, 100,50);
     newButton->setText("Verify");
+    newButton->setCallbackEvent(Handler::EVENT_VERIFY);
+    listButtons.push_back(newButton);
+    
+    // Reset Button
+    newButton = new RectButton(renderer_ , font_, 520, 200, 100,50);
+    newButton->setText("Reset");
+    newButton->setCallbackEvent(Handler::EVENT_RESET);
     listButtons.push_back(newButton);
     
     return true;
@@ -120,7 +121,7 @@ bool GameScreen::loadButtons(){
 // Process all handlers
 bool GameScreen::processHandlers()
 {
-    bool success = true;
+    bool success = false;
     
     while( !handlerQueue_.empty()){
         Handler handler = handlerQueue_.front();
@@ -129,9 +130,16 @@ bool GameScreen::processHandlers()
         switch (handler.getEvent())
         {
             case Handler::EVENT_VERIFY:
+                isVerify = !isVerify;
+                success = true;
                 break;
                 
             case Handler::EVENT_INPUT:
+                success = true;
+                break;
+                
+            case Handler::EVENT_RESET:
+                
                 break;
                 
             case Handler::EVENT_IGNORE:
@@ -139,12 +147,22 @@ bool GameScreen::processHandlers()
 
         }
     }
-    
     return success;
 }
 
 
-
+void GameScreen::render()
+{
+    // Clear window
+    window_->clearScreen();
+    
+    // Render sudoky and Buttons
+    sudoku_->render(isVerify);
+    for( Button* button: listButtons) button->render();
+    
+    // Update Screen
+    window_->updateScreen();
+}
 
 
 

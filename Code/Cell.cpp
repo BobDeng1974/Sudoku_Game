@@ -23,17 +23,32 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
     this->anchorPoint_.x = x;
     this->anchorPoint_.y = y;
     this->size_ = size;
-    this->row_ = row;
-    this->col_ = col;
+    this->coords_.setRow(row);
+    this->coords_.setCol(col);
 }
 
 
+// TODO implement verify mode
 
-void Cell::render()
+void Cell::render(bool modeVerify, int value)
 {
     SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, size_, size_ };
-    if( isFocused_)SDL_SetRenderDrawColor( renderer_, 0x00, 0xFF, 0x00, 0xFF );
-    else if ( isBlocked_) SDL_SetRenderDrawColor( renderer_, 0x99, 0x99, 0x99, 0xFF );
+    
+    // Set color according to mode
+    if( isFocused_)
+        SDL_SetRenderDrawColor( renderer_, 0xE0, 0xE0, 0xE0, 0xFF );  // Cell is focused ( light gray)
+    
+    else if ( isBlocked_)
+        SDL_SetRenderDrawColor( renderer_, 0x99, 0x99, 0x99, 0xFF );  // Cell is from puzzle (dark gray)
+    
+    else if ( modeVerify){  // Mode verify
+        if(value_ == value )
+            SDL_SetRenderDrawColor( renderer_, 0x00, 0xE6, 0x99, 0xFF );    // cell is correct
+        else if ( value_!=0)
+            SDL_SetRenderDrawColor( renderer_, 0xFF, 0x00, 0x00, 0xFF );    // cell is wrong
+        else
+            SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );    // cell is empty
+    }
     else SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderFillRect( renderer_, &fillRect );
     
@@ -178,7 +193,23 @@ void Cell::free()
         SDL_DestroyTexture( mTexture );
         mTexture = NULL;
     }
+    isFocused_=false;
+    isBlocked_=false;
+    value_ = 0;
+    possibleValues_.reset();
 }
+
+void Cell::reset()
+{
+    //Free texture if it exists
+    if( mTexture != NULL )
+    {
+        SDL_DestroyTexture( mTexture );
+        mTexture = NULL;
+    }
+    
+}
+
 
 
 void Cell::setFocused(bool state){ isFocused_ = state;}
@@ -212,19 +243,11 @@ void Cell::setValue(int value){ value_=value; }
 
 void Cell::setValuePossibility(std::bitset<9> possibleValues) { possibleValues_=possibleValues; }
 
-void Cell::setRemovedQueue(){ isQueued_=false; }
-
 bool Cell::setValuePossibility(int value, bool valid) {
     bool wasFalse = false;
     if(!possibleValues_[value-1]) wasFalse=true;
     possibleValues_[value-1]=valid;
     return wasFalse;
-}
-
-void Cell::setQueued( Cell::State mode)
-{
-    state_ =mode;
-    isQueued_=true;
 }
 
 //  Getters
@@ -237,9 +260,3 @@ bool Cell::getValuePossibility(int value) const { return possibleValues_[value-1
 std::size_t Cell::getNumberPossibilities() const { return 9-possibleValues_.count(); }
 
 std::bitset<9> Cell::getPossibleValues() const { return possibleValues_; }
-
-bool Cell::isQueued() const { return isQueued_; }
-
-Cell::State Cell::getMode() const { return isQueued_? state_: STATE_NOK; }
-
-

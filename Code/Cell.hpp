@@ -20,45 +20,53 @@
 class Cell
 {
     public:
-        enum State { STATE_SOLVED, STATE_ROW, STATE_COL, STATE_ROWCOL, STATE_NOK};
-
         Cell();
         Cell(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int row, int col);
 
+        // Set cell values
         void setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int row, int col);
     
-        void render();
+        // Render Cell
+        void render( bool modeVerify=false, int value = 0);
+    
+        // Load text texture
         bool loadFromRenderedText( std::string textureText, SDL_Color textColor );
 
+        // Mode Setters
         void setFocused(bool state);
         void setBlocked(bool isBlocked);
     
+        // Input Handlers
         bool handleFocusEvent( SDL_Event* e);
         void handleInputEvent( SDL_Event* e);
     
+        // Resets Cell
+        void reset();
+    
+        // Deallocator
         void free();
     
         //Game Logic
+        // When only 1 possibiliy, set value for it
         int fixValue();
     
-        void setRemovedQueue();
-        void setQueued( State mode);
+        // Setters
         void setCoordinates(int row, int col);
         void setValue(int value);
-        bool setValuePossibility(int value, bool valid);
-        void setValuePossibility(std::bitset<9> possibleValues);
+        bool setValuePossibility(int value, bool valid);  // set a bit to valid
+        void setValuePossibility(std::bitset<9> possibleValues); // set the comple bitset
     
+        // Getters
         Coordinates getCoordinates() const;
         int getValue() const;
         bool getValuePossibility(int value) const;
-        std::size_t getNumberPossibilities() const;
+        std::size_t getNumberPossibilities() const; // get number of negatives on bitset
         std::bitset<9> getPossibleValues() const;
-        bool isQueued() const;
-        State getMode() const;
-    
+
 
     
     private:
+        // SDL Variables
         SDL_Renderer* renderer_=nullptr;
         TTF_Font* font_=nullptr;
         SDL_Texture* mTexture=nullptr;
@@ -68,20 +76,15 @@ class Cell
         int size_;
     
         // Board coordinates
-        int row_;
-        int col_;
-    
-    
+        Coordinates coords_;
+
+        // State Variables
         bool isFocused_ = false;
         bool isBlocked_ = false;
     
         // Game Logic Variabless
-        Coordinates coords_;
         std::bitset<9> possibleValues_;
-        State state_;
-        bool isQueued_=false;
         int value_ = 0;
-
 };
 
 #endif /* Cell_hpp */

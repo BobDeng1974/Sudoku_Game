@@ -14,7 +14,7 @@
 class Handler
 {
     public:
-        enum Event{ EVENT_IGNORE, EVENT_INPUT, EVENT_VERIFY};
+        enum Event{ EVENT_IGNORE, EVENT_INPUT, EVENT_VERIFY, EVENT_RESET};
 
         Handler();
         Handler( Handler::Event event);
