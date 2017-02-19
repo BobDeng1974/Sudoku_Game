@@ -69,6 +69,10 @@ class Sudoku
         SDL_Renderer* renderer_ = nullptr;
         TTF_Font* font_ = nullptr;
     
+        // Number of Cells per line
+        int horizontalCellNo = 9;
+        int verticalCellNo = 9;
+
         // Game board and board with solution
         std::vector<Cell> board_;
         std::vector<Cell> solution_;

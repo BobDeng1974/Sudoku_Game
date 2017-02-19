@@ -81,7 +81,7 @@ bool GameScreen::init()
 
     sudoku_ = new Sudoku( renderer_, font_, windowWidth_,windowHeight_);
 
-    if(!sudoku_->buildFromFile( std::string("Puzzles/Hard/hard3.txt"))){
+    if(!sudoku_->buildFromFile( filename_)){
         std::cerr << "Failed to load Puzzle\n";
         success = false;
     }
@@ -139,7 +139,8 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_RESET:
-                
+                sudoku_->reset();
+                sudoku_->buildFromFile(filename_);
                 break;
                 
             case Handler::EVENT_IGNORE:

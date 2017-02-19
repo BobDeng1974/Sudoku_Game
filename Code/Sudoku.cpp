@@ -30,11 +30,11 @@ Sudoku::Sudoku(SDL_Renderer* renderer, TTF_Font* font, int screenWidth, int scre
 void Sudoku::createBoard()
 {
     int ydividerSpace = 0;
-    for (int i=0; i<9; i++){
+    for (int i=0; i<horizontalCellNo; i++){
         int xdividerSpace = 0;
         if (i%3==0) ydividerSpace+=4;
         
-        for (int j=0; j<9; j++){
+        for (int j=0; j<verticalCellNo; j++){
             if (j%3==0) xdividerSpace+= 4;
             board_.push_back( Cell(renderer_, font_, (xOffset_ + (j*cellSize_)) + xdividerSpace , yOffset_ + (i*cellSize_) + ydividerSpace, cellSize_, i, j));
         }
@@ -44,8 +44,8 @@ void Sudoku::createBoard()
 
 void Sudoku::render(bool modeVerify)
 {
-    for (int i=0; i<9; i++){
-        for (int j=0; j<9; j++){
+    for (int i=0; i<horizontalCellNo; i++){
+        for (int j=0; j<verticalCellNo; j++){
             board_[(i*9) + j].render( modeVerify, solution_[(i*9) + j].getValue());
         }
     }
@@ -56,7 +56,7 @@ void Sudoku::render(bool modeVerify)
      int diviserSpace=0;
     
     // Draw vertical lines
-    for (int i =0; i<10; i++){
+    for (int i =0; i<horizontalCellNo+1; i++){
         if (i%3!=0) SDL_RenderDrawLine(
                                       renderer_,
                                       xOffset_ + (i*cellSize_) + diviserSpace,
@@ -78,7 +78,7 @@ void Sudoku::render(bool modeVerify)
     
     // Draw horizontal lines
     diviserSpace=0;
-    for (int i =0; i<10; i++){
+    for (int i =0; i<verticalCellNo+1; i++){
         if (i%3!=0){
             SDL_RenderDrawLine(
                                renderer_,
@@ -112,8 +112,8 @@ Handler Sudoku::handleEvent(SDL_Event *e)
     {
         int row=0, col=0;
         bool inside = false;
-        for (int i=0; i<9; i++){
-            for (int j=0; j<9; j++){
+        for (int i=0; i<horizontalCellNo; i++){
+            for (int j=0; j<verticalCellNo; j++){
                 if( (inside=board_[ (i*9)+j].handleFocusEvent(e)) ){
                     row = i;
                     col = j;
@@ -191,11 +191,11 @@ bool Sudoku::insertCellValue(int row, int col, int value)
 
 bool Sudoku::isValidInsertion(int row, int col, int value) const
 {
-    for(int i=0; i< boardWidth_; i++){
+    for(int i=0; i< horizontalCellNo; i++){
         if( board_[(row*9)+i].getValue()==value) return false;
     }
     
-    for(int i=0; i< boardHeight; i++){
+    for(int i=0; i< verticalCellNo; i++){
         if( board_[(i*9)+col].getValue()==value) return false;
     }
     

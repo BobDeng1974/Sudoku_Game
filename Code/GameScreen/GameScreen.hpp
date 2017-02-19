@@ -72,6 +72,9 @@ class GameScreen
         //Verify Mode active
         bool isVerify=false;
     
+        // Sudoku File Name
+        std::string filename_ = "Puzzles/Hard/hard3.txt";
+    
 };
 
 #endif /* GameScreen_hpp */

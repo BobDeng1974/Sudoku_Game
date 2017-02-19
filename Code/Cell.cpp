@@ -193,11 +193,7 @@ void Cell::free()
         SDL_DestroyTexture( mTexture );
         mTexture = NULL;
     }
-    isFocused_=false;
-    isBlocked_=false;
-    value_ = 0;
-    possibleValues_.reset();
-}
+  }
 
 void Cell::reset()
 {
@@ -207,7 +203,11 @@ void Cell::reset()
         SDL_DestroyTexture( mTexture );
         mTexture = NULL;
     }
-    
+    isFocused_=false;
+    isBlocked_=false;
+    value_ = 0;
+    possibleValues_.reset();
+
 }
 
 
