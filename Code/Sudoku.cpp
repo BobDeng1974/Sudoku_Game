@@ -107,8 +107,11 @@ void Sudoku::render()
 }
 
 
-void Sudoku::handleEvent(SDL_Event *e)
+Handler Sudoku::handleEvent(SDL_Event *e)
 {
+    // return Handler
+    Handler handler(Handler::EVENT_IGNORE);
+    
     //If mouse event happened
     if( e->type == SDL_MOUSEBUTTONDOWN)
     {
@@ -127,7 +130,10 @@ void Sudoku::handleEvent(SDL_Event *e)
         
         //Mouse clicked outside cells
         if ( !inside){
-            if( focusedCell!=nullptr) focusedCell->setFocused(false);
+            if( focusedCell!=nullptr){
+                focusedCell->setFocused(false);
+                handler.setEvent(Handler::EVENT_INPUT);
+            }
         }
         //Mouse clicked inside cell
         else
@@ -136,28 +142,18 @@ void Sudoku::handleEvent(SDL_Event *e)
                 if(focusedCell!=nullptr)focusedCell->setFocused(false);
                 focusedCell = &board_[(row*9)+col];
                 focusedCell->setFocused(true);
+                handler.setEvent(Handler::EVENT_INPUT);
             }
-            /*//Set mouse over sprite
-            switch( e->type )
-            {
-                case SDL_MOUSEMOTION:
-                    mCurrentSprite = BUTTON_SPRITE_MOUSE_OVER_MOTION;
-                    break;
-                    
-                case SDL_MOUSEBUTTONDOWN:
-                    mCurrentSprite = BUTTON_SPRITE_MOUSE_DOWN;
-                    break;
-                    
-                case SDL_MOUSEBUTTONUP:
-                    mCurrentSprite = BUTTON_SPRITE_MOUSE_UP;
-                    break;
-            }*/
         }
     }
     else if( e->type == SDL_KEYDOWN )
     {
-        if( focusedCell!=nullptr) focusedCell->handleInputEvent(e);
+        if( focusedCell!=nullptr){
+            focusedCell->handleInputEvent(e);
+            handler.setEvent(Handler::EVENT_INPUT);
+        }
     }
+    return handler;
 }
 
 
