@@ -21,7 +21,7 @@ class RectButton : public Button
         RectButton(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int width, int height);
     
         // handle Events
-        Handler handleEvent(SDL_Event *e);
+        virtual Handler handleEvent(SDL_Event *e);
     
         // render button
         void render();

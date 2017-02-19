@@ -36,6 +36,9 @@ class Button
         // interface render
         virtual void render() = 0;
     
+        // reset button to initial state
+        virtual void reset(){};
+    
     protected:
         // button location
         SDL_Point anchorPoint_;

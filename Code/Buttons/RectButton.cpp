@@ -61,6 +61,11 @@ Handler RectButton::handleEvent(SDL_Event *e)
     return handler;
 }
 
+void RectButton::reset()
+{
+    isClicked_=false;
+}
+
 void RectButton::render()
 {
     SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, width_, height_ };

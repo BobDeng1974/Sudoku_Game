@@ -14,17 +14,23 @@
 class Handler
 {
     public:
-        enum Event{ EVENT_IGNORE, EVENT_INPUT, EVENT_VERIFY, EVENT_RESET};
+        enum Event{ EVENT_IGNORE, EVENT_INPUT, EVENT_VERIFY, EVENT_RESET, EVENT_PICKER};
 
         Handler();
         Handler( Handler::Event event);
     
+        // Setters
         void setEvent(Handler::Event event);
-
+        void setIntExtra(int extra);
+    
+        // Getters
         Handler::Event getEvent() const;
-        
+        int getIntExtra()const;
+    
     private:
         Event event_;
+    
+        int intExtra_;
 };
 
 #endif /* Handler_hpp */

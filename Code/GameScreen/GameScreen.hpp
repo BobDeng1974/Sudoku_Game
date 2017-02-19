@@ -18,6 +18,7 @@
 #include "Window.hpp"
 #include "Sudoku.hpp"
 #include "RectButton.hpp"
+#include "SelectorButton.hpp"
 
 class GameScreen
 {
@@ -42,6 +43,9 @@ class GameScreen
         // Render screen
         virtual void render();
     
+        // Proccess Difficulty picker input
+        bool loadPickedPuzzle( int difficulty);
+
     
     private:
         // Screen Size
@@ -71,6 +75,15 @@ class GameScreen
     
         //Verify Mode active
         bool isVerify=false;
+    
+        // Puzzle Picking Variables
+        bool isPlaying=false;           // User is Playing Puzzle
+        Texture* pickingText = nullptr; // Texture with text for picking
+        std::vector<Button*> difficultyPickerButtons;  // list with buttons for difficulty picking
+        int buttonWidth_ = 100;  // Button Width
+        int buttonHeight_ = 50;  // Button Height
+        SDL_Color textColor = { 0, 0, 0, 0xFF }; // text color
+        enum Difficulty { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, DIFFICULTY_VERYHEARD, DIFFICULTY_CUSTOM};
     
         // Sudoku File Name
         std::string filename_ = "Puzzles/Hard/hard3.txt";

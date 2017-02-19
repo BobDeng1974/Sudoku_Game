@@ -15,6 +15,10 @@ Handler::Handler( Handler::Event event)
     setEvent(event);
 }
 
+// Setters
 void Handler::setEvent(Handler::Event event){ this->event_ = event; }
+void Handler::setIntExtra(int extra){ this->intExtra_ = extra; }
 
-Handler::Event Handler::getEvent() const { return event_;}
+// Getters
+Handler::Event Handler::getEvent() const { return event_; }
+int Handler::getIntExtra() const { return intExtra_; }
