@@ -17,8 +17,11 @@ RectButton::RectButton(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int
 }
 
 
-bool RectButton::handleEvent(SDL_Event *e)
+Handler RectButton::handleEvent(SDL_Event *e)
 {
+    // return Handler
+    Handler handler(Handler::EVENT_IGNORE);
+    
     //If mouse event happened
     if( e->type == SDL_MOUSEBUTTONDOWN)
     {
@@ -50,13 +53,12 @@ bool RectButton::handleEvent(SDL_Event *e)
             inside = false;
         }
         
-        if(inside)isClicked_ = !isClicked_;
-        
-        
-        return inside;
+        if(inside){
+            isClicked_ = !isClicked_;
+            handler.setEvent(Handler::EVENT_VERIFY);
+        }
     }
-
-    return false;
+    return handler;
 }
 
 void RectButton::render()

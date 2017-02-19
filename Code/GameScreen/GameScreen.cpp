@@ -23,6 +23,9 @@ void GameScreen::start()
     // User wants to Quit
     bool quit = false;
     
+    // Required to update window
+    bool update = false;
+    
     // Event Handler
     SDL_Event e;
     
@@ -32,24 +35,31 @@ void GameScreen::start()
                 quit = true;
             }
             else{
-                sudoku_->handleEvent(&e);
-                for( Button* button: listButtons) button->handleEvent(&e);
+                // Forward events to components and store answers (Handlers) onto queue
+                handlerQueue_.push(sudoku_->handleEvent(&e));
+                for( Button* button: listButtons) handlerQueue_.push(button->handleEvent(&e));
             }
         }
+        // Process queue of handlers
+        update = processHandlers();
         
-        
-        window_->clearScreen();
-        
-        sudoku_->render();
-        for( Button* button: listButtons) button->render();
-        
-        
-        window_->updateScreen();
-        
+        if( update){
+            // Clear window
+            window_->clearScreen();
+            
+            // Render sudoky and Buttons
+            sudoku_->render();
+            for( Button* button: listButtons) button->render();
+            
+            // Update Screen
+            window_->updateScreen();
+        }
     }
 
 }
 
+
+// Initializes all Screen components (window,buttons,sudoku)
 bool GameScreen::init()
 {
     bool success=true;
@@ -94,7 +104,7 @@ bool GameScreen::init()
 }
 
 
-
+// Load all buttons
 bool GameScreen::loadButtons(){
     
     RectButton* newButton;
@@ -105,3 +115,38 @@ bool GameScreen::loadButtons(){
     
     return true;
 }
+
+
+// Process all handlers
+bool GameScreen::processHandlers()
+{
+    bool success = true;
+    
+    while( !handlerQueue_.empty()){
+        Handler handler = handlerQueue_.front();
+        handlerQueue_.pop();
+    
+        switch (handler.getEvent())
+        {
+            case Handler::EVENT_VERIFY:
+                break;
+                
+            case Handler::EVENT_INPUT:
+                break;
+                
+            case Handler::EVENT_IGNORE:
+                break;
+
+        }
+    }
+    
+    return success;
+}
+
+
+
+
+
+
+
+

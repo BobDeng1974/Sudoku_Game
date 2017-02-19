@@ -12,6 +12,7 @@
 #include <iostream>
 #include <sstream>
 #include <fstream>
+#include <queue>
 
 
 #include "Window.hpp"
@@ -31,11 +32,12 @@ class GameScreen
         void start();
     
     
-    
-    
     protected:
         // Load Screen Buttons
         virtual bool loadButtons();
+    
+        //Process Handlers
+        virtual bool processHandlers();
     
     
     private:
@@ -54,12 +56,19 @@ class GameScreen
     
         // List of Buttons
         std::vector<Button*> listButtons;
+
+        // List of Handlers (event tracker)
+        std::queue<Handler> handlerQueue_;
     
         //Sudoku game
         Sudoku* sudoku_ = nullptr;
     
         // Bool indicates if initiated correctly
         bool hasInitiated=false;
+    
+        //Verify Mode active
+        bool isVerify=false;
+    
 };
 
 #endif /* GameScreen_hpp */

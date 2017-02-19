@@ -25,6 +25,8 @@
 #include "Cell.hpp"
 #include "SodukuSolver.hpp"
 
+#include "Handler.hpp"
+
 
 
 #define HORIZONTAL_AXIS "     A   B   C   D   E   F   G   H   I  "
@@ -38,8 +40,8 @@ class Sudoku
 
         void render();
     
-        void handleEvent( SDL_Event* e);
-    
+        Handler handleEvent( SDL_Event* e);
+        
         //Game Functions
         bool insertCellValue(int row, int col, int value);
         virtual bool solveSudoku();

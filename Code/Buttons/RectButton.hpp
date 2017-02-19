@@ -12,6 +12,7 @@
 #include <iostream>
 
 #include "Button.hpp"
+#include "Handler.hpp"
 
 class RectButton : public Button
 {
@@ -20,7 +21,7 @@ class RectButton : public Button
         RectButton(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int width, int height);
     
         // handle Events
-        bool handleEvent(SDL_Event *e);
+        Handler handleEvent(SDL_Event *e);
     
         // render button
         void render();
