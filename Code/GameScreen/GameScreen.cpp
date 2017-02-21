@@ -69,37 +69,34 @@ bool GameScreen::init()
         success = false;
     }
     
-    // Load font
-    if( !window_->loadFont("Images/font2.ttf")){
-        std::cerr << "Failed to load window\n";
-        success = false;
-    }
     // Get Screen Variables
     renderer_ = window_->getRenderer();
-    font_ = window_->getFont();
     
-    //Initiate Buttons
-    if(!loadButtons()){
-        std::cerr << "Failed to load Buttons\n";
+    // Create font class
+    font_ = new Font("Images/font2.ttf");
+    if( !font_->createSizedFont(28)){
+        std::cerr << " Failed to load font\n";
         success = false;
     }
+    font_->createSizedFont(24);
+    font_->createSizedFont(20);
+    font_->createSizedFont(16);
+    font_->createSizedFont(12);
 
-    pickingText_ = new Texture(renderer_,font_);
-    pickingText_->loadFromRenderedText("Choose the difficulty:", textColor_);
     
-    sudoku_ = new Sudoku( renderer_, font_, windowWidth_,windowHeight_);
-
-   /* if(!sudoku_->buildFromFile( filename_)){
-        std::cerr << "Failed to load Puzzle\n";
-        success = false;
+    if( success){
+        //Initiate Buttons
+        if(!loadButtons()){
+            std::cerr << "Failed to load Buttons\n";
+            success = false;
+        }
+        
+        pickingText_ = new Texture(renderer_,font_->getFont(24));
+        pickingText_->loadFromRenderedText("Choose the difficulty:", textColor_);
+        
+        sudoku_ = new Sudoku( renderer_, font_->getFont(28), windowWidth_,windowHeight_);
+        hasInitiated=true;
     }
-    
-    if(!sudoku_->solveSudoku()){
-        std::cerr << "Failed to solve puzzle\n";
-        success = false;
-    }*/
-
-    if( success) hasInitiated=true;
 
     return success;
 }
@@ -110,20 +107,21 @@ bool GameScreen::loadButtons(){
     
     RectButton* newButton;
     
+    int buttonx = (3*windowWidth_)/4 + ( ( windowWidth_/4)- buttonWidth_)/2;
     // Verify Button
-    newButton = new RectButton(renderer_ , font_, 520, 100, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, 100, buttonWidth_, buttonHeight_);
     newButton->setText("Verify");
     newButton->setCallbackEvent(Handler::EVENT_VERIFY);
     listButtons.push_back(newButton);
     
     // Reset Button
-    newButton = new RectButton(renderer_ , font_, 520, 200, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, 200, buttonWidth_, buttonHeight_);
     newButton->setText("Reset");
     newButton->setCallbackEvent(Handler::EVENT_RESET);
     listButtons.push_back(newButton);
     
     // New Game Button
-    newButton = new RectButton(renderer_ , font_, 520, 300, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(12), buttonx, 300, buttonWidth_, buttonHeight_);
     newButton->setText("New Game");
     newButton->setCallbackEvent(Handler::EVENT_NEWGAME);
     listButtons.push_back(newButton);
@@ -133,31 +131,31 @@ bool GameScreen::loadButtons(){
     int diff_x = (windowWidth_*3/4)/2 - (buttonWidth_);
     int diff_y = ( windowHeight_ - (buttonHeight_*3/2)*6 )/2;
     // Easy Button
-    newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2), buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_EASY);
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2), buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_EASY);
     newButton->setText("Easy");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
     difficultyPickerButtons_.push_back(newButton);
     
     // Medium Button
-    newButton = new SelectorButton(renderer_ , font_, diff_x, diff_y + (buttonHeight_*3/2)*2, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_MEDIUM);
+    newButton = new SelectorButton(renderer_ , font_->getFont(24), diff_x, diff_y + (buttonHeight_*3/2)*2, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_MEDIUM);
     newButton->setText("Medium");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
     difficultyPickerButtons_.push_back(newButton);
     
     // Hard Button
-    newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*3, buttonWidth_*2, buttonHeight_ , Difficulty::DIFFICULTY_HARD);
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*3, buttonWidth_*2, buttonHeight_ , Difficulty::DIFFICULTY_HARD);
     newButton->setText("Hard");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
     difficultyPickerButtons_.push_back(newButton);
     
     // Very Hard Button
-    newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*4, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_VERYHEARD);
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*4, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_VERYHEARD);
     newButton->setText("Very Hard");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
     difficultyPickerButtons_.push_back(newButton);
     
     // Custom Button
-    newButton = new SelectorButton(renderer_ , font_,  diff_x, diff_y + (buttonHeight_*3/2)*5, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_CUSTOM);
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*5, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_CUSTOM);
     newButton->setText("Custom");
     newButton->setCallbackEvent(Handler::EVENT_PICKER);
     difficultyPickerButtons_.push_back(newButton);

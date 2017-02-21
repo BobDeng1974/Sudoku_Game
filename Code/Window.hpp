@@ -24,7 +24,6 @@ class Window
         // initialize support libraries
         virtual bool init();
     
-        bool loadFont( std::string path);
     
         // Clear screen
         void clearScreen();
@@ -34,7 +33,6 @@ class Window
     
         // Getters
         SDL_Renderer* getRenderer() const;
-        TTF_Font* getFont() const;
     
     protected:
         bool initPNG();

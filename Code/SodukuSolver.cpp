@@ -48,9 +48,6 @@ std::vector<Cell>  SudokuSolver::solvePuzzle( std::vector<Cell> &board)
             std::cout << std::endl;
             std::cout << "   +---+---+---+---+---+---+---+---+---+" << std::endl;
         }
-
-        
-        
     }
 
     searchAlgorithm();
@@ -151,7 +148,6 @@ bool SudokuSolver::updateCells( int row, int col, int value)
                 cellToBeSolved.push(Coordinates(i, col));
             }
         }
-
     }
     
     

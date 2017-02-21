@@ -19,6 +19,7 @@
 #include "Sudoku.hpp"
 #include "RectButton.hpp"
 #include "SelectorButton.hpp"
+#include "Font.hpp"
 
 class GameScreen
 {
@@ -59,7 +60,7 @@ class GameScreen
         SDL_Renderer* renderer_ = nullptr;
     
         //TTF font
-        TTF_Font* font_;
+        Font* font_ = nullptr;
     
         // List of Buttons
         std::vector<Button*> listButtons;
@@ -80,8 +81,8 @@ class GameScreen
         bool isPlaying_ = false;           // User is Playing Puzzle
         Texture* pickingText_ = nullptr; // Texture with text for picking
         std::vector<Button*> difficultyPickerButtons_;  // list with buttons for difficulty picking
-        int buttonWidth_ = 100;  // Button Width
-        int buttonHeight_ = 50;  // Button Height
+        int buttonWidth_ = 80;  // Button Width
+        int buttonHeight_ = 35;  // Button Height
         SDL_Color textColor_ = { 0, 0, 0, 0xFF }; // text color
         enum Difficulty { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, DIFFICULTY_VERYHEARD, DIFFICULTY_CUSTOM};
     

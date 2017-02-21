@@ -110,23 +110,6 @@ bool Window::initTTF()
     return true;
 }
 
-bool Window::loadFont(std::string path)
-{
-    //Loading success flag
-    bool success = true;
-    
-    //Open the font
-    font_ = TTF_OpenFont( path.c_str(), 28 );
-    if( font_ == NULL )
-    {
-        std::cerr << "Failed to load lazy font! SDL_ttf Error: " << TTF_GetError() << std::endl;
-        success = false;
-    }
-    return success;
-}
-
-
 SDL_Renderer* Window::getRenderer() const { return renderer_; }
-TTF_Font* Window::getFont() const { return font_; }
 
 

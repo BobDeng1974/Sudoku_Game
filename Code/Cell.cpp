@@ -27,9 +27,6 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
     this->coords_.setCol(col);
 }
 
-
-// TODO implement verify mode
-
 void Cell::render(bool modeVerify, int value)
 {
     SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, size_, size_ };

@@ -52,8 +52,6 @@ class Sudoku
         virtual bool solveSudoku();
         bool buildFromFile(std::string path);
     
-    
-    
     private:
         // Board thick line size
         static const int thickLineSize=4;
