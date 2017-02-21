@@ -105,7 +105,7 @@ void Sudoku::render(bool modeVerify)
 }
 
 
-Handler Sudoku::handleEvent(SDL_Event *e)
+Handler Sudoku::handleEvent(SDL_Event *e, bool isEasyMode)
 {
     // return Handler
     Handler handler(Handler::EVENT_IGNORE);
@@ -147,13 +147,68 @@ Handler Sudoku::handleEvent(SDL_Event *e)
     else if( e->type == SDL_KEYDOWN )
     {
         if( focusedCell!=nullptr){
-            focusedCell->handleInputEvent(e);
+            handleInputEvent(e, isEasyMode);
             handler.setEvent(Handler::EVENT_INPUT);
         }
     }
     return handler;
 }
 
+void Sudoku::handleInputEvent( SDL_Event* e, bool isEasyMode)
+{
+    Coordinates coords = focusedCell->getCoordinates();
+    switch( e->key.keysym.sym )
+    {
+        case SDLK_1:    // pressed 1
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 1))
+                focusedCell->setValue(1);
+            break;
+            
+        case SDLK_2:    // pressed 2
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 2))
+                focusedCell->setValue(2);
+            break;
+            
+        case SDLK_3:    // pressed 3
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 3))
+                focusedCell->setValue(3);
+            break;
+            
+        case SDLK_4:    // pressed 4
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 4))
+                focusedCell->setValue(4);
+            break;
+            
+        case SDLK_5:    // pressed 5
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 5))
+                focusedCell->setValue(5);
+            break;
+            
+        case SDLK_6:    // pressed 6
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 6))
+                focusedCell->setValue(6);
+            break;
+            
+        case SDLK_7:    // pressed 7
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 7))
+                focusedCell->setValue(7);
+            break;
+            
+        case SDLK_8:    // pressed 8
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 8))
+                focusedCell->setValue(8);
+            break;
+            
+        case SDLK_9:    // pressed 9
+            if( isValidInsertion( coords.getRow(), coords.getCol(), 9))
+                focusedCell->setValue(9);
+            break;
+        case SDLK_BACKSPACE:    //backspace -> erase value
+            focusedCell->setValue(0);
+            break;
+    }
+
+}
 
 bool Sudoku::buildFromFile( std::string path)
 {

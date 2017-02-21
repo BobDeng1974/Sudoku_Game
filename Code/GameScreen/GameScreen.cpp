@@ -130,7 +130,7 @@ bool GameScreen::loadButtons(){
     listButtons.push_back(newButton);
 
     // Easy Mode Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (4*buttony) + (3*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (5*buttony) + (4*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Easy");
     newButton->setCallbackEvent(Handler::EVENT_EASY);
     listButtons.push_back(newButton);
@@ -224,12 +224,12 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_EASY:
-                
+                isEasy_ = !isEasy_;
+                success = true;
                 break;
                 
             case Handler::EVENT_IGNORE:
                 break;
-
         }
     }
     return success;

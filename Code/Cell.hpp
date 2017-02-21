@@ -38,7 +38,6 @@ class Cell
     
         // Input Handlers
         bool handleFocusEvent( SDL_Event* e);
-        void handleInputEvent( SDL_Event* e);
     
         // Resets Cell
         void reset();

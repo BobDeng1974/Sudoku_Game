@@ -44,8 +44,9 @@ class Sudoku
         void render(bool modeVerify=false);
     
         // Handle event on sudoku board
-        Handler handleEvent( SDL_Event* e);
-    
+        Handler handleEvent( SDL_Event* e , bool isEasyMode = false);
+        void handleInputEvent( SDL_Event* e, bool isEasyMode);
+
         // Reset board
         void reset();
     

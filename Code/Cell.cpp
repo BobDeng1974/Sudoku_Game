@@ -136,51 +136,6 @@ bool Cell::handleFocusEvent(SDL_Event* e)
     return false;
 }
 
-void Cell::handleInputEvent(SDL_Event *e)
-{
-    switch( e->key.keysym.sym )
-    {
-        case SDLK_1:    // pressed 1
-            value_=1;
-            break;
-            
-        case SDLK_2:    // pressed 2
-            value_=2;
-            break;
-            
-        case SDLK_3:    // pressed 3
-            value_=3;
-            break;
-            
-        case SDLK_4:    // pressed 4
-            value_=4;
-            break;
-            
-        case SDLK_5:    // pressed 5
-            value_ = 5;
-            break;
-            
-        case SDLK_6:    // pressed 6
-            value_ = 6;
-            break;
-            
-        case SDLK_7:    // pressed 7
-            value_ = 7;
-            break;
-            
-        case SDLK_8:    // pressed 8
-            value_ = 8;
-            break;
-            
-        case SDLK_9:    // pressed 9
-            value_ = 9;
-            break;
-        case SDLK_BACKSPACE:    //backspace -> erase value
-            value_ = 0;
-            break;
-    }
-}
-
 
 void Cell::free()
 {

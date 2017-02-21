@@ -75,11 +75,9 @@ class GameScreen
         // Bool indicates if initiated correctly
         bool hasInitiated=false;
     
-        //Verify Mode active
-        bool isVerify_ = false;
-    
-        // Board is completed and correct
-        bool isFinished = false;
+        bool isVerify_ = false;    // Verify Mode active
+        bool isFinished = false;   // Board is completed and correct
+        bool isEasy_ = false;      // Easy Mode on (Only accepts possible input
     
         // Puzzle Picking Variables
         bool isPlaying_ = false;           // User is Playing Puzzle
