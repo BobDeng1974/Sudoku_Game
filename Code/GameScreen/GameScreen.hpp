@@ -21,6 +21,8 @@
 #include "SelectorButton.hpp"
 #include "Font.hpp"
 
+#define MAX_HINTS 3
+
 class GameScreen
 {
     public:
@@ -46,7 +48,7 @@ class GameScreen
         // Proccess Difficulty picker input
         bool loadPickedPuzzle( int difficulty);
 
-    
+
     private:
         // Screen Size
         int windowWidth_;
@@ -76,6 +78,9 @@ class GameScreen
         //Verify Mode active
         bool isVerify_ = false;
     
+        // Board is completed and correct
+        bool isFinished = false;
+    
         // Puzzle Picking Variables
         bool isPlaying_ = false;           // User is Playing Puzzle
         Texture* pickingText_ = nullptr; // Texture with text for picking
@@ -88,6 +93,8 @@ class GameScreen
         // Sudoku File Name
         std::string filename_ = "Puzzles/Hard/hard3.txt";
     
+        // Number of available hints
+        int hintNo = MAX_HINTS;
 };
 
 #endif /* GameScreen_hpp */

@@ -230,6 +230,8 @@ int Cell::fixValue()
 
 
 //  Setters
+void Cell::setFocus(bool isFocused){ this->isFocused_ = isFocused; }
+
 void Cell::setCoordinates(int row, int col)
 {
     coords_.setRow(row);

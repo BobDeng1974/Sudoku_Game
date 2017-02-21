@@ -24,6 +24,9 @@ Sudoku::Sudoku(SDL_Renderer* renderer, TTF_Font* font, int screenWidth, int scre
     boardWidth_ = boardHeight;
     
     createBoard();
+    
+    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    generator_ = new std::minstd_rand0(seed);
 }
 
 
@@ -160,9 +163,7 @@ bool Sudoku::buildFromFile( std::string path)
     
     std::string line;
     while ( std::getline(f_input,line) ) {
-        
         std::stringstream ss(line);
-        
         bool hasFailed=false;
         char row, col, value;
         ss >> row;
@@ -171,7 +172,6 @@ bool Sudoku::buildFromFile( std::string path)
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
         ss >> value;
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
-        
         if(!insertCellValue(row - '1',  col - 'A', value - '0')){
             return false;
         }
@@ -211,9 +211,7 @@ bool Sudoku::isValidInsertion(int row, int col, int value) const
 bool Sudoku::solveSudoku()
 {
     SudokuSolver solver(9, 9);
-    
     solution_ = solver.solvePuzzle(board_);
-    
     return true;
 }
 
@@ -227,8 +225,50 @@ void Sudoku::reset()
     }
 }
 
+void Sudoku::showAndBlockCell()
+{
+    int missing= getNoEmptyBlock();
+    
+    // Chosen one of the missing to show
+    int chosen = (*generator_)() % missing;
+    missing = 0;
+    for (std::size_t i = 0; i< board_.size(); i++) {
+        if( board_[i].getValue()==0){
+            if(missing==chosen){
+                board_[i].setBlocked(true);
+                board_[i].setValue( solution_[i].getValue());
+                i = board_.size();
+            }
+            else missing++;
+        }
+    }
+}
 
+void Sudoku::blockBoard()
+{
+    for(std::size_t i = 0; i < board_.size(); i++){
+        board_[i].setBlocked(true);
+        board_[i].setFocus(false);
+    }
+}
 
+int Sudoku::getNoEmptyBlock() const
+{
+    int missing=0;
+    for(Cell cell:board_)
+        if( cell.getValue()==0)
+            missing++;
+    return missing;
+}
+
+bool Sudoku::isAllCorrect() const
+{
+    bool success = true;
+    for(std::size_t i = 0 ; i<board_.size() && success==true; i++)
+        if(board_[i].getValue() != solution_[i].getValue())
+            success=false;
+    return success;
+}
 
 
 

@@ -104,26 +104,38 @@ bool GameScreen::loadButtons(){
     RectButton* newButton;
     
     int buttonx = (3*windowWidth_)/4 + ( ( windowWidth_/4)- buttonWidth_)/2;
+    int buttony = (windowHeight_/5)/5;
     // Verify Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, 100, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, buttony, buttonWidth_, buttonHeight_);
     newButton->setText("Verify");
     newButton->setCallbackEvent(Handler::EVENT_VERIFY);
     listButtons.push_back(newButton);
     
     // Reset Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, 200, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (2*buttony) + buttonHeight_, buttonWidth_, buttonHeight_);
     newButton->setText("Reset");
     newButton->setCallbackEvent(Handler::EVENT_RESET);
     listButtons.push_back(newButton);
     
     // New Game Button
-    newButton = new RectButton(renderer_ , font_->getFont(12), buttonx, 300, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(12), buttonx, (3*buttony) + (2*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("New Game");
     newButton->setCallbackEvent(Handler::EVENT_NEWGAME);
     listButtons.push_back(newButton);
+    
+    // Hint Button
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (4*buttony) + (3*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton->setText("Hint");
+    newButton->setCallbackEvent(Handler::EVENT_HINT);
+    listButtons.push_back(newButton);
 
+    // Easy Mode Button
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (4*buttony) + (3*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton->setText("Easy");
+    newButton->setCallbackEvent(Handler::EVENT_EASY);
+    listButtons.push_back(newButton);
     
-    
+    // Load Difficulty Selection Buttons
     int diff_x = (windowWidth_*3/4)/2 - (buttonWidth_);
     int diff_y = ( windowHeight_ - (buttonHeight_*3/2)*6 )/2;
     // Easy Button
@@ -177,6 +189,10 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_INPUT:
+                if( sudoku_->getNoEmptyBlock()==0 && sudoku_->isAllCorrect()){
+                    sudoku_->blockBoard();
+                    isFinished=true;
+                }
                 success = true;
                 break;
                 
@@ -184,6 +200,8 @@ bool GameScreen::processHandlers()
                 sudoku_->reset();
                 sudoku_->buildFromFile(filename_);
                 for( Button* button: listButtons) button->reset();
+                hintNo = MAX_HINTS;
+                isFinished=false;
                 break;
                 
             case Handler::EVENT_NEWGAME:
@@ -193,7 +211,20 @@ bool GameScreen::processHandlers()
             case Handler::EVENT_PICKER:
                 if( !isPlaying_){
                     success = loadPickedPuzzle( handler.getIntExtra());
+                    isFinished=false;
                 }
+                break;
+                
+            case Handler::EVENT_HINT:
+                if(hintNo > 0){
+                    sudoku_->showAndBlockCell();
+                    success=true;
+                    hintNo--;
+                }
+                break;
+                
+            case Handler::EVENT_EASY:
+                
                 break;
                 
             case Handler::EVENT_IGNORE:

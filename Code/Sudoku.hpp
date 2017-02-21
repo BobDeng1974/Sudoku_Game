@@ -9,11 +9,11 @@
 #ifndef Sudoku_hpp
 #define Sudoku_hpp
 
-#include <iostream>
 
 #include <SDL2/SDL.h>
 #include <SDL2_ttf/SDL_ttf.h>
 
+#include <iostream>
 #include <queue>
 #include <bitset>
 #include <unordered_map>
@@ -21,6 +21,8 @@
 #include <vector>
 #include <fstream>
 #include <sstream>
+#include <random>
+#include <chrono>
 
 #include "Cell.hpp"
 #include "SodukuSolver.hpp"
@@ -51,6 +53,15 @@ class Sudoku
         bool insertCellValue(int row, int col, int value);
         virtual bool solveSudoku();
         bool buildFromFile(std::string path);
+        void showAndBlockCell();
+    
+        // Block all Cells
+        void blockBoard();
+    
+        // Get Number of empty blocks
+        int getNoEmptyBlock() const;
+        // Verify if board is finished and correct
+        bool isAllCorrect() const;
     
     private:
         // Board thick line size
@@ -77,6 +88,9 @@ class Sudoku
     
         // Pointer to clicked cell
         Cell *focusedCell = nullptr;
+    
+        // Random number generator
+        std::minstd_rand0* generator_;
    
         // Creates the board (all cells)
         void createBoard();

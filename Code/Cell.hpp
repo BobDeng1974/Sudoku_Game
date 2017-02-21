@@ -51,6 +51,7 @@ class Cell
         int fixValue();
     
         // Setters
+        void setFocus(bool isFocused);
         void setCoordinates(int row, int col);
         void setValue(int value);
         bool setValuePossibility(int value, bool valid);  // set a bit to valid
