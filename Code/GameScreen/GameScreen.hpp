@@ -24,7 +24,6 @@
 class GameScreen
 {
     public:
-        GameScreen();
         GameScreen(int windowWidth, int windowHeight);
 
         // Initialize Screen

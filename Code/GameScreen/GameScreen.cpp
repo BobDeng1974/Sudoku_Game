@@ -8,8 +8,6 @@
 
 #include "GameScreen.hpp"
 
-GameScreen::GameScreen(){}
-
 GameScreen::GameScreen(int windowWidth, int windowHeight)
 {
     this->windowWidth_ = windowWidth;
@@ -48,12 +46,10 @@ void GameScreen::start()
         }
         // Process queue of handlers
         update = processHandlers();
-        
         if( update){
             render();
         }
     }
-
 }
 
 

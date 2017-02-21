@@ -7,20 +7,53 @@
 //
 
 //Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 400;
+const int SCREEN_HEIGHT = 100;
 
 #include "GameScreen.hpp"
+#include "ResolutionScreen.hpp"
 
 
 int main(int argc, const char * argv[]) {
     
-    // Create Game Screen
-    GameScreen gameScreen (SCREEN_WIDTH, SCREEN_HEIGHT);
-    
-    if( gameScreen.init() ){
-        gameScreen.start();
+    bool success = false;
+    if(SDL_Init(SDL_INIT_VIDEO) <0){
+        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+        success = false;
     }
+    else{
+        //Set texture filtering to linear
+        if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
+        {
+            std::cerr << "Warning: Linear texture filtering not enabled!\n";
+        }
+    }
+    
+    
+    //Create Resolution Screen
+    ResolutionScreen* resScreen = new ResolutionScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
+    
+    if( resScreen->init() ){
+        success = resScreen->start();
+    }
+    
+    if( success){
+        int width;
+        int height;
+        resScreen->getResolution( width, height);
+        delete resScreen;
+        
+        // Create Game Screen
+        GameScreen gameScreen (width, height);
+        
+        if( gameScreen.init() ){
+            gameScreen.start();
+        }
+
+    }
+    
+    SDL_Quit();
+
     
     return 0;
 }

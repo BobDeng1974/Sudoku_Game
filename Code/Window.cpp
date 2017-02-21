@@ -27,46 +27,34 @@ Window::~Window()
     
     //Quit SDL subsystems
     if( isPNGActive_)IMG_Quit();
-    SDL_Quit();
+    if( isTTFActive_)TTF_Quit();
 }
 
 bool Window::init()
 {
     bool success = true;
     
-    if(SDL_Init(SDL_INIT_VIDEO) <0){
-        std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
+    window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth_, screenHeight_, SDL_WINDOW_SHOWN);
+    if(window_==nullptr){
+        std::cerr <<  "Window could not be created! SDL_Error: "<< SDL_GetError() << std::endl;
         success = false;
     }
     else{
-        //Set texture filtering to linear
-        if( !SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "1" ) )
-        {
-            std::cerr << "Warning: Linear texture filtering not enabled!\n";
-        }
-        
-        window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth_, screenHeight_, SDL_WINDOW_SHOWN);
-        if(window_==nullptr){
-            std::cerr <<  "Window could not be created! SDL_Error: "<< SDL_GetError() << std::endl;
+        // Create renderer
+        renderer_ = SDL_CreateRenderer( window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
+        if( renderer_ == nullptr){
+            std::cerr << "Renderer coundn't be created! SDL Error: " << SDL_GetError() << std::endl;
             success = false;
         }
         else{
-            // Create renderer
-            renderer_ = SDL_CreateRenderer( window_, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC );
-            if( renderer_ == nullptr){
-                std::cerr << "Renderer coundn't be created! SDL Error: " << SDL_GetError() << std::endl;
-                success = false;
-            }
-            else{
-                //Initialize renderer color
-                SDL_SetRenderDrawColor(renderer_, 0xFF, 0xFF, 0xFF, 0xFF);
-                
-                if( !initPNG()) success = false;
-                
-                if( !initTTF()) success = false;
-            }
+            //Initialize renderer color
+            SDL_SetRenderDrawColor(renderer_, 0xFF, 0xFF, 0xFF, 0xFF);
+            
+            if( !initPNG()) success = false;
+            
+            if( !initTTF()) success = false;
         }
-    }
+    }    
     return success;
 }
 
