@@ -37,7 +37,7 @@ class Cell
         void setBlocked(bool isBlocked);
     
         // Input Handlers
-        bool handleFocusEvent( SDL_Event* e);
+        bool handleFocusEvent( SDL_Event* e, bool isCustom=false);
     
         // Resets Cell
         void reset();

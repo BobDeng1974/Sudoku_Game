@@ -49,7 +49,9 @@ void Sudoku::render(bool modeVerify)
 {
     for (int i=0; i<horizontalCellNo; i++){
         for (int j=0; j<verticalCellNo; j++){
-            board_[(i*9) + j].render( modeVerify, solution_[(i*9) + j].getValue());
+            if(isCustomMode())
+                 board_[(i*9) + j].render( modeVerify, 0);
+            else board_[(i*9) + j].render( modeVerify, solution_[(i*9) + j].getValue());
         }
     }
     
@@ -105,7 +107,7 @@ void Sudoku::render(bool modeVerify)
 }
 
 
-Handler Sudoku::handleEvent(SDL_Event *e, bool isEasyMode)
+Handler Sudoku::handleEvent(SDL_Event *e)
 {
     // return Handler
     Handler handler(Handler::EVENT_IGNORE);
@@ -117,7 +119,7 @@ Handler Sudoku::handleEvent(SDL_Event *e, bool isEasyMode)
         bool inside = false;
         for (int i=0; i<horizontalCellNo; i++){
             for (int j=0; j<verticalCellNo; j++){
-                if( (inside=board_[ (i*9)+j].handleFocusEvent(e)) ){
+                if( (inside=board_[ (i*9)+j].handleFocusEvent(e, customMode_)) ){
                     row = i;
                     col = j;
                     i=9;
@@ -147,68 +149,73 @@ Handler Sudoku::handleEvent(SDL_Event *e, bool isEasyMode)
     else if( e->type == SDL_KEYDOWN )
     {
         if( focusedCell!=nullptr){
-            handleInputEvent(e, isEasyMode);
+            handleInputEvent(e);
             handler.setEvent(Handler::EVENT_INPUT);
         }
     }
     return handler;
 }
 
-void Sudoku::handleInputEvent( SDL_Event* e, bool isEasyMode)
+void Sudoku::handleInputEvent( SDL_Event* e)
 {
     Coordinates coords = focusedCell->getCoordinates();
     switch( e->key.keysym.sym )
     {
         case SDLK_1:    // pressed 1
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 1))
-                focusedCell->setValue(1);
+            updateCellValue(coords.getRow(), coords.getCol(), 1);
             break;
             
         case SDLK_2:    // pressed 2
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 2))
-                focusedCell->setValue(2);
+            updateCellValue(coords.getRow(), coords.getCol(), 2);
             break;
             
         case SDLK_3:    // pressed 3
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 3))
-                focusedCell->setValue(3);
+            updateCellValue(coords.getRow(), coords.getCol(), 3);
             break;
             
         case SDLK_4:    // pressed 4
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 4))
-                focusedCell->setValue(4);
+            updateCellValue(coords.getRow(), coords.getCol(), 4);
             break;
             
         case SDLK_5:    // pressed 5
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 5))
-                focusedCell->setValue(5);
+            updateCellValue(coords.getRow(), coords.getCol(), 5);
             break;
             
         case SDLK_6:    // pressed 6
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 6))
-                focusedCell->setValue(6);
+            updateCellValue(coords.getRow(), coords.getCol(), 6);
             break;
             
         case SDLK_7:    // pressed 7
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 7))
-                focusedCell->setValue(7);
+            updateCellValue(coords.getRow(), coords.getCol(), 7);
             break;
             
         case SDLK_8:    // pressed 8
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 8))
-                focusedCell->setValue(8);
+            updateCellValue(coords.getRow(), coords.getCol(), 8);
             break;
             
         case SDLK_9:    // pressed 9
-            if( isValidInsertion( coords.getRow(), coords.getCol(), 9))
-                focusedCell->setValue(9);
+            updateCellValue(coords.getRow(), coords.getCol(), 9);
             break;
         case SDLK_BACKSPACE:    //backspace -> erase value
             focusedCell->setValue(0);
+            focusedCell->setBlocked(false);
             break;
     }
 
 }
+
+void Sudoku::updateCellValue(int row, int col, int value)
+{
+    
+    if( easyMode_){
+        if( isValidInsertion( row, col, value))
+            focusedCell->setValue( value );
+    }
+    else focusedCell->setValue(value);
+    
+    if( customMode_) focusedCell->setBlocked(true);
+}
+
 
 bool Sudoku::buildFromFile( std::string path)
 {
@@ -232,6 +239,8 @@ bool Sudoku::buildFromFile( std::string path)
         }
     }
     f_input.close();
+    
+    initialState_ = board_;
     return true;
 }
 
@@ -271,13 +280,18 @@ bool Sudoku::solveSudoku()
 }
 
 
-void Sudoku::reset()
+void Sudoku::reset( bool eraseAll)
 {
     for (int i=0; i<9; i++){
         for (int j=0; j<9; j++){
             board_[(i*9) + j].reset();
+            if( !eraseAll && initialState_[(i*9) + j].getValue()!=0){
+                board_[(i*9) + j].setBlocked(true);
+                board_[(i*9) + j].setValue(initialState_[(i*9) + j].getValue());
+            }
         }
     }
+    
 }
 
 void Sudoku::showAndBlockCell()
@@ -327,6 +341,13 @@ bool Sudoku::isAllCorrect() const
 
 
 
+// Setters
+void Sudoku::setEasyMode(bool easyMode) { easyMode_ = easyMode; }
+void Sudoku::setCustomMode(bool customMode) { customMode_ = customMode; }
+void Sudoku::setInitialStateBoard(){ initialState_ = board_;}
+// Getters
+bool Sudoku::isEasyMode() const { return easyMode_; }
+bool Sudoku::isCustomMode() const { return customMode_; }
 
 
 

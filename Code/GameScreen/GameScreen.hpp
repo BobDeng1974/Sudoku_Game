@@ -65,6 +65,7 @@ class GameScreen
     
         // List of Buttons
         std::vector<Button*> listButtons;
+        RectButton* doneButton=nullptr;
 
         // List of Handlers (event tracker)
         std::queue<Handler> handlerQueue_;
@@ -78,6 +79,7 @@ class GameScreen
         bool isVerify_ = false;    // Verify Mode active
         bool isFinished = false;   // Board is completed and correct
         bool isEasy_ = false;      // Easy Mode on (Only accepts possible input
+        bool isCustom_ = false;    // User is inputing custom puzzle
     
         // Puzzle Picking Variables
         bool isPlaying_ = false;           // User is Playing Puzzle
@@ -86,7 +88,7 @@ class GameScreen
         int buttonWidth_ = 80;  // Button Width
         int buttonHeight_ = 35;  // Button Height
         SDL_Color textColor_ = { 0, 0, 0, 0xFF }; // text color
-        enum Difficulty { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, DIFFICULTY_VERYHEARD, DIFFICULTY_CUSTOM};
+        enum Difficulty { DIFFICULTY_EASY, DIFFICULTY_MEDIUM, DIFFICULTY_HARD, DIFFICULTY_VERYHEARD, DIFFICULTY_CUSTOM}; // Difficulty
     
         // Sudoku File Name
         std::string filename_ = "Puzzles/Hard/hard3.txt";

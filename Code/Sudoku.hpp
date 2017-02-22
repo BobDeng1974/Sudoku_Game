@@ -44,11 +44,11 @@ class Sudoku
         void render(bool modeVerify=false);
     
         // Handle event on sudoku board
-        Handler handleEvent( SDL_Event* e , bool isEasyMode = false);
-        void handleInputEvent( SDL_Event* e, bool isEasyMode);
+        Handler handleEvent( SDL_Event* e );
+        void handleInputEvent( SDL_Event* e);
 
         // Reset board
-        void reset();
+        void reset(bool eraseAll);
     
         //Game Functions
         bool insertCellValue(int row, int col, int value);
@@ -63,6 +63,14 @@ class Sudoku
         int getNoEmptyBlock() const;
         // Verify if board is finished and correct
         bool isAllCorrect() const;
+    
+        // Game Variation Setters
+        void setEasyMode( bool easyMode);
+        void setCustomMode( bool customMode);
+        void setInitialStateBoard();
+        // Game Variation Getters
+        bool isEasyMode() const;
+        bool isCustomMode() const;
     
     private:
         // Board thick line size
@@ -84,8 +92,9 @@ class Sudoku
         int verticalCellNo = 9;
 
         // Game board and board with solution
-        std::vector<Cell> board_;
-        std::vector<Cell> solution_;
+        std::vector<Cell> board_; // present state
+        std::vector<Cell> solution_; // correct final state
+        std::vector<Cell> initialState_; // initial state
     
         // Pointer to clicked cell
         Cell *focusedCell = nullptr;
@@ -98,7 +107,12 @@ class Sudoku
     
         // Verifies if an insertion is valid
         bool isValidInsertion(int row, int col, int value) const;
-    
+        //
+        void updateCellValue(int row, int col, int value);
+
+        // Game Variation variables
+        bool easyMode_ = false;
+        bool customMode_ = false;
 
     
     

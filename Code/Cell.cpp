@@ -95,9 +95,9 @@ bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
     return mTexture != NULL;
 }
 
-bool Cell::handleFocusEvent(SDL_Event* e)
+bool Cell::handleFocusEvent(SDL_Event* e, bool isCustom)
 {
-    if( isBlocked_) return false;
+    if( isBlocked_ && !isCustom) return false;
     //If mouse event happened
     if( e->type == SDL_MOUSEBUTTONDOWN)
     {
@@ -159,7 +159,6 @@ void Cell::reset()
     isBlocked_=false;
     value_ = 0;
     possibleValues_.reset();
-
 }
 
 

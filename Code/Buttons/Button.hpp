@@ -39,6 +39,14 @@ class Button
         // reset button to initial state
         virtual void reset(){};
     
+        // State Setters
+        void setVisibility( bool visibility);
+        void setEnabled( bool enabled);
+    
+        // Getters of State
+        bool getVisibility() const;
+        bool getEnabled() const;
+    
     protected:
         // button location
         SDL_Point anchorPoint_;
@@ -53,6 +61,10 @@ class Button
     
         // Text color
         SDL_Color textColor = { 0, 0, 0, 0xFF };
+    
+        // State Indicators
+        bool isVisible_ = true;
+        bool isEnabled_ = true;
 
 };
 

@@ -135,6 +135,16 @@ bool GameScreen::loadButtons(){
     newButton->setCallbackEvent(Handler::EVENT_EASY);
     listButtons.push_back(newButton);
     
+    // Done Mode Button
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (6*buttony) + (5*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton->setText("Done");
+    newButton->setCallbackEvent(Handler::EVENT_CUSTOM);
+    newButton->setVisibility(false);
+    newButton->setEnabled(false);
+    doneButton = newButton;
+    listButtons.push_back(newButton);
+    
+    
     // Load Difficulty Selection Buttons
     int diff_x = (windowWidth_*3/4)/2 - (buttonWidth_);
     int diff_y = ( windowHeight_ - (buttonHeight_*3/2)*6 )/2;
@@ -197,14 +207,15 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_RESET:
-                sudoku_->reset();
-                sudoku_->buildFromFile(filename_);
+                sudoku_->reset(false);
+                //sudoku_->buildFromFile(filename_);
                 for( Button* button: listButtons) button->reset();
                 hintNo = MAX_HINTS;
                 isFinished=false;
                 break;
                 
             case Handler::EVENT_NEWGAME:
+                sudoku_->reset(true);
                 isPlaying_ = false;
                 break;
                 
@@ -224,8 +235,23 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_EASY:
-                isEasy_ = !isEasy_;
+                if( !sudoku_->isCustomMode()) sudoku_->setEasyMode( !sudoku_->isEasyMode());
                 success = true;
+                break;
+                
+            case Handler::EVENT_CUSTOM:
+                doneButton->setEnabled(false);
+                doneButton->setVisibility(false);
+                if(!sudoku_->solveSudoku()){
+                    std::cerr << "impossible Sudoku configuration!\n";
+                }
+                else{
+                    sudoku_->setEasyMode(false);
+                    sudoku_->setCustomMode(false);
+                    isPlaying_=true;
+                    success = true;
+                    sudoku_->setInitialStateBoard();
+                }
                 break;
                 
             case Handler::EVENT_IGNORE:
@@ -268,7 +294,6 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
     switch (difficulty) {
         case DIFFICULTY_EASY:
             filename_ ="Puzzles/Easy/sudoku1.txt";
-            sudoku_->reset();
             sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
             isPlaying_ = true;
@@ -277,7 +302,6 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
             
         case DIFFICULTY_MEDIUM:
             filename_= "Puzzles/Medium/Medium1.txt";
-            sudoku_->reset();
             sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
             isPlaying_ = true;
@@ -286,7 +310,6 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
             
         case DIFFICULTY_HARD:
             filename_ = "Puzzles/Hard/hard1.txt";
-            sudoku_->reset();
             sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
             isPlaying_ = true;
@@ -295,7 +318,6 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
             
         case DIFFICULTY_VERYHEARD:
             filename_ = "Puzzles/Hard/hard2.txt";
-            sudoku_->reset();
             sudoku_->buildFromFile(filename_);
             sudoku_->solveSudoku();
             isPlaying_ = true;
@@ -303,6 +325,12 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
             break;
             
         case DIFFICULTY_CUSTOM:
+            doneButton->setEnabled(true);
+            doneButton->setVisibility(true);
+            sudoku_->setCustomMode(true);
+            sudoku_->setEasyMode(true);
+            isPlaying_ = true;
+            success = true;
             break;
     }
     
