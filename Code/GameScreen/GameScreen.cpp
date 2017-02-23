@@ -50,6 +50,7 @@ void GameScreen::start()
             render();
         }
     }
+    saveFile_->writeFile();
 }
 
 
@@ -59,7 +60,7 @@ bool GameScreen::init()
     bool success=true;
     
     // Initiate window (sdl, window, renderer, png, ttf)
-    window_ = new Window(windowWidth_, windowHeight_, "My fun project!");
+    window_ = new Window(windowWidth_, windowHeight_, "Sudoku");
     if( !window_->init()){
         std::cerr << "Failed to initiate window\n";
         success = false;
@@ -79,6 +80,9 @@ bool GameScreen::init()
     font_->createSizedFont(16);
     font_->createSizedFont(12);
 
+    // Loads save file
+    saveFile_ = new SaveFile("Saved/saved.bin");
+    if(!saveFile_->readFile()) success = false;
     
     if( success){
         //Initiate Buttons
@@ -102,6 +106,62 @@ bool GameScreen::init()
 bool GameScreen::loadButtons(){
     
     RectButton* newButton;
+    std::string buttonName;
+    
+    // Load Difficulty Selection Buttons
+    int diff_x = (windowWidth_*3/4)/2 - (buttonWidth_);
+    int diff_y = ( windowHeight_ - (buttonHeight_*3/2)*6 )/2;
+    int value;
+
+    // Easy Button
+    value = (saveFile_->getIndexValue(0)>4)? 4: saveFile_->getIndexValue(0);
+    buttonName = "Easy (";
+    buttonName.append( std::to_string(value));
+    buttonName.append("/4)");
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2), buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_EASY);
+    newButton->setText(buttonName);
+    newButton->setCallbackEvent(Handler::EVENT_PICKER);
+    difficultyPickerButtons_.push_back(newButton);
+    
+    // Medium Button
+    value = (saveFile_->getIndexValue(1)>4)? 4: saveFile_->getIndexValue(1);
+    buttonName = "Medium (";
+    buttonName.append( std::to_string(value));
+    buttonName.append("/4)");
+    newButton = new SelectorButton(renderer_ , font_->getFont(24), diff_x, diff_y + (buttonHeight_*3/2)*2, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_MEDIUM);
+    newButton->setText(buttonName);
+    newButton->setCallbackEvent(Handler::EVENT_PICKER);
+    difficultyPickerButtons_.push_back(newButton);
+    
+    // Hard Button
+    value = (saveFile_->getIndexValue(2)>4)? 4: saveFile_->getIndexValue(2);
+    buttonName = "Hard (";
+    buttonName.append( std::to_string(value));
+    buttonName.append("/4)");
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*3, buttonWidth_*2, buttonHeight_ , Difficulty::DIFFICULTY_HARD);
+    newButton->setText(buttonName);
+    newButton->setCallbackEvent(Handler::EVENT_PICKER);
+    difficultyPickerButtons_.push_back(newButton);
+    
+    // Very Hard Button
+    value = (saveFile_->getIndexValue(3)>4)? 4: saveFile_->getIndexValue(3);
+    buttonName = "Very Hard (";
+    buttonName.append( std::to_string(value));
+    buttonName.append("/4)");
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*4, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_VERYHARD);
+    newButton->setText(buttonName);
+    newButton->setCallbackEvent(Handler::EVENT_PICKER);
+    difficultyPickerButtons_.push_back(newButton);
+    
+    // Custom Button
+    buttonName = "Custom (";
+    buttonName.append( std::to_string(saveFile_->getIndexValue(4)));
+    buttonName.append(")");
+    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*5, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_CUSTOM);
+    newButton->setText(buttonName);
+    newButton->setCallbackEvent(Handler::EVENT_PICKER);
+    difficultyPickerButtons_.push_back(newButton);
+
     
     int buttonx = (3*windowWidth_)/4 + ( ( windowWidth_/4)- buttonWidth_)/2;
     int buttony = (windowHeight_/5)/5;
@@ -128,7 +188,7 @@ bool GameScreen::loadButtons(){
     newButton->setText("Hint");
     newButton->setCallbackEvent(Handler::EVENT_HINT);
     listButtons.push_back(newButton);
-
+    
     // Easy Mode Button
     newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (5*buttony) + (4*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Easy");
@@ -145,39 +205,7 @@ bool GameScreen::loadButtons(){
     listButtons.push_back(newButton);
     
     
-    // Load Difficulty Selection Buttons
-    int diff_x = (windowWidth_*3/4)/2 - (buttonWidth_);
-    int diff_y = ( windowHeight_ - (buttonHeight_*3/2)*6 )/2;
-    // Easy Button
-    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2), buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_EASY);
-    newButton->setText("Easy");
-    newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons_.push_back(newButton);
     
-    // Medium Button
-    newButton = new SelectorButton(renderer_ , font_->getFont(24), diff_x, diff_y + (buttonHeight_*3/2)*2, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_MEDIUM);
-    newButton->setText("Medium");
-    newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons_.push_back(newButton);
-    
-    // Hard Button
-    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*3, buttonWidth_*2, buttonHeight_ , Difficulty::DIFFICULTY_HARD);
-    newButton->setText("Hard");
-    newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons_.push_back(newButton);
-    
-    // Very Hard Button
-    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*4, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_VERYHEARD);
-    newButton->setText("Very Hard");
-    newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons_.push_back(newButton);
-    
-    // Custom Button
-    newButton = new SelectorButton(renderer_ , font_->getFont(24),  diff_x, diff_y + (buttonHeight_*3/2)*5, buttonWidth_*2, buttonHeight_, Difficulty::DIFFICULTY_CUSTOM);
-    newButton->setText("Custom");
-    newButton->setCallbackEvent(Handler::EVENT_PICKER);
-    difficultyPickerButtons_.push_back(newButton);
-
     return true;
 }
 
@@ -199,9 +227,11 @@ bool GameScreen::processHandlers()
                 break;
                 
             case Handler::EVENT_INPUT:
-                if( sudoku_->getNoEmptyBlock()==0 && sudoku_->isAllCorrect()){
+                if( sudoku_->getNoEmptyBlock()==0 && sudoku_->isAllCorrect() && !isFinished){
                     sudoku_->blockBoard();
                     isFinished=true;
+                    saveFile_->incrementIndex(currentDifficulty);
+                    updateButtonText(currentDifficulty);
                 }
                 success = true;
                 break;
@@ -221,7 +251,7 @@ bool GameScreen::processHandlers()
                 
             case Handler::EVENT_PICKER:
                 if( !isPlaying_){
-                    success = loadPickedPuzzle( handler.getIntExtra());
+                    success = handleDifficulty( handler.getIntExtra());
                     isFinished=false;
                 }
                 break;
@@ -231,6 +261,12 @@ bool GameScreen::processHandlers()
                     sudoku_->showAndBlockCell();
                     success=true;
                     hintNo--;
+                    if(sudoku_->getNoEmptyBlock()==0 && sudoku_->isAllCorrect()){
+                        sudoku_->blockBoard();
+                        isFinished=true;
+                        saveFile_->incrementIndex(currentDifficulty);
+                        updateButtonText(currentDifficulty);
+                    }
                 }
                 break;
                 
@@ -282,45 +318,36 @@ void GameScreen::render()
     window_->updateScreen();
 }
 
-bool GameScreen::loadPickedPuzzle( int difficulty)
+bool GameScreen::handleDifficulty( int difficulty)
 {
     // Return boolean
     bool success = false;
     
     // TODO Refactor into function
-    // TODO Implement Custom
     
     
     switch (difficulty) {
         case DIFFICULTY_EASY:
-            filename_ ="Puzzles/Easy/sudoku1.txt";
-            sudoku_->buildFromFile(filename_);
-            sudoku_->solveSudoku();
-            isPlaying_ = true;
+            loadPuzzle( DIFFICULTY_EASY, "Puzzles/Easy/easy");
+            currentDifficulty = DIFFICULTY_EASY;
             success = true;
             break;
             
         case DIFFICULTY_MEDIUM:
-            filename_= "Puzzles/Medium/Medium1.txt";
-            sudoku_->buildFromFile(filename_);
-            sudoku_->solveSudoku();
-            isPlaying_ = true;
+            loadPuzzle(DIFFICULTY_MEDIUM, "Puzzles/Medium/medium");
+            currentDifficulty = DIFFICULTY_MEDIUM;
             success = true;
             break;
             
         case DIFFICULTY_HARD:
-            filename_ = "Puzzles/Hard/hard1.txt";
-            sudoku_->buildFromFile(filename_);
-            sudoku_->solveSudoku();
-            isPlaying_ = true;
+            loadPuzzle(DIFFICULTY_HARD, "Puzzles/Hard/hard");
+            currentDifficulty = DIFFICULTY_HARD;
             success = true;
             break;
             
-        case DIFFICULTY_VERYHEARD:
-            filename_ = "Puzzles/Hard/hard2.txt";
-            sudoku_->buildFromFile(filename_);
-            sudoku_->solveSudoku();
-            isPlaying_ = true;
+        case DIFFICULTY_VERYHARD:
+            loadPuzzle(DIFFICULTY_VERYHARD, "Puzzles/VeryHard/veryhard");
+            currentDifficulty = DIFFICULTY_VERYHARD;
             success = true;
             break;
             
@@ -330,6 +357,7 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
             sudoku_->setCustomMode(true);
             sudoku_->setEasyMode(true);
             isPlaying_ = true;
+            currentDifficulty = DIFFICULTY_CUSTOM;
             success = true;
             break;
     }
@@ -337,6 +365,55 @@ bool GameScreen::loadPickedPuzzle( int difficulty)
     return success;
 }
 
+void GameScreen::loadPuzzle(GameScreen::Difficulty difficulty, std::string path)
+{
+    int index = (saveFile_->getIndexValue(difficulty)%4 )+1 ;
+    
+    std::string filename = path;
+    filename.append( std::to_string(index));
+    filename.append(".txt");
+    sudoku_->buildFromFile(filename);
+    sudoku_->solveSudoku();
+    isPlaying_ = true;
+}
 
+void GameScreen::updateButtonText(GameScreen::Difficulty difficulty)
+{
+    std::string buttonName;
+    int value = saveFile_->getIndexValue( difficulty);
+    if (value >4) value = 4;
+    switch (difficulty) {
+        case DIFFICULTY_EASY:
+            buttonName = "Easy (";
+            buttonName.append( std::to_string(value));
+            buttonName.append("/4)");
+            break;
+            
+        case DIFFICULTY_MEDIUM:
+            buttonName = "Medium (";
+            buttonName.append( std::to_string(value));
+            buttonName.append("/4)");
+            break;
+            
+        case DIFFICULTY_HARD:
+            buttonName = "Hard (";
+            buttonName.append( std::to_string(value));
+            buttonName.append("/4)");
+            break;
+            
+        case DIFFICULTY_VERYHARD:
+            buttonName = "Very Hard (";
+            buttonName.append( std::to_string(value));
+            buttonName.append("/4)");
+            break;
+            
+        case DIFFICULTY_CUSTOM:
+            buttonName = "Custom (";
+            buttonName.append( std::to_string(saveFile_->getIndexValue(4)));
+            buttonName.append(")");
+            break;
+    }
+    difficultyPickerButtons_[difficulty]->setText(buttonName);
+}
 
 
