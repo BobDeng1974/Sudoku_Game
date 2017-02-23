@@ -61,6 +61,12 @@ Handler RectButton::handleEvent(SDL_Event *e)
             handler.setEvent(event_);
         }
     }
+    if( !hasToggleCapacity_){
+        if (e->type == SDL_MOUSEBUTTONUP) {
+            isClicked_=false;
+            handler.setEvent( Handler::EVENT_RENDER);
+        }
+    }
     return handler;
 }
 
@@ -87,6 +93,8 @@ void RectButton::render()
         texture_->render( anchorPoint_.x + (width_ - texture_->getWidth())/2, anchorPoint_.y + (height_ - texture_->getHeight())/2);
 
 }
+
+void RectButton::setToggle(bool toggle){ hasToggleCapacity_ = toggle;}
 
 // Sets Button event to be set on clicked
 void RectButton::setCallbackEvent(Handler::Event event){ this->event_ = event; }

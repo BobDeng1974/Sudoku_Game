@@ -32,11 +32,16 @@ class RectButton : public Button
         // reset button state
         void reset();
     
+        // Set toggle behaviour
+        void setToggle( bool toggle);
+    
     protected:
         int width_;
         int height_;
     
         bool isClicked_ = false;
+    
+        bool hasToggleCapacity_ = false;
     
         Handler::Event event_ = Handler::EVENT_IGNORE;
   

@@ -169,6 +169,7 @@ bool GameScreen::loadButtons(){
     newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, buttony, buttonWidth_, buttonHeight_);
     newButton->setText("Verify");
     newButton->setCallbackEvent(Handler::EVENT_VERIFY);
+    newButton->setToggle(true);
     listButtons.push_back(newButton);
     
     // Reset Button
@@ -193,6 +194,7 @@ bool GameScreen::loadButtons(){
     newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (5*buttony) + (4*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Easy");
     newButton->setCallbackEvent(Handler::EVENT_EASY);
+    newButton->setToggle(true);
     listButtons.push_back(newButton);
     
     // Done Mode Button
@@ -290,6 +292,10 @@ bool GameScreen::processHandlers()
                 }
                 break;
                 
+            case Handler::EVENT_RENDER:
+                success = true;
+                break;
+                
             case Handler::EVENT_IGNORE:
                 break;
         }
@@ -308,7 +314,8 @@ void GameScreen::render()
         sudoku_->render(isVerify_);  // Render sudoku if playing
     else{
         pickingText_->render((windowWidth_*3/4)/2 - (pickingText_->getWidth()/2), ( windowHeight_ - (buttonHeight_*3/2)*6 )/2);
-        for( Button* button: difficultyPickerButtons_) button->render(); // else render the picking buttons
+        for( Button* button: difficultyPickerButtons_) button->render();
+        for( Button* button: listButtons) button->render();
     }
     
     // Render options buttons
