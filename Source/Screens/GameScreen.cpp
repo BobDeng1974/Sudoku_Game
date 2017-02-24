@@ -164,7 +164,7 @@ bool GameScreen::loadButtons(){
 
     
     int buttonx = (3*windowWidth_)/4 + ( ( windowWidth_/4)- buttonWidth_)/2;
-    int buttony = (windowHeight_/5)/5;
+    int buttony = (windowHeight_/6)/2 - buttonHeight_/2;
     // Verify Button
     newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, buttony, buttonWidth_, buttonHeight_);
     newButton->setText("Verify");
@@ -173,32 +173,32 @@ bool GameScreen::loadButtons(){
     listButtons.push_back(newButton);
     
     // Reset Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (2*buttony) + buttonHeight_, buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (3*buttony) + (buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Reset");
     newButton->setCallbackEvent(Handler::EVENT_RESET);
     listButtons.push_back(newButton);
     
     // New Game Button
-    newButton = new RectButton(renderer_ , font_->getFont(12), buttonx, (3*buttony) + (2*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(12), buttonx, (5*buttony) + (2*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("New Game");
     newButton->setCallbackEvent(Handler::EVENT_NEWGAME);
     listButtons.push_back(newButton);
     
     // Hint Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (4*buttony) + (3*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (7*buttony + 3*buttonHeight_) , buttonWidth_, buttonHeight_);
     newButton->setText("Hint");
     newButton->setCallbackEvent(Handler::EVENT_HINT);
     listButtons.push_back(newButton);
     
     // Easy Mode Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (5*buttony) + (4*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (9*buttony + 4*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Easy");
     newButton->setCallbackEvent(Handler::EVENT_EASY);
     newButton->setToggle(true);
     listButtons.push_back(newButton);
     
     // Done Mode Button
-    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (6*buttony) + (5*buttonHeight_), buttonWidth_, buttonHeight_);
+    newButton = new RectButton(renderer_ , font_->getFont(16), buttonx, (11*buttony + 5*buttonHeight_), buttonWidth_, buttonHeight_);
     newButton->setText("Done");
     newButton->setCallbackEvent(Handler::EVENT_CUSTOM);
     newButton->setVisibility(false);
@@ -249,6 +249,9 @@ bool GameScreen::processHandlers()
             case Handler::EVENT_NEWGAME:
                 sudoku_->reset(true);
                 isPlaying_ = false;
+                listButtons[0]->setEnabled(true);
+                listButtons[3]->setEnabled(true);
+                listButtons[4]->setEnabled(true);
                 break;
                 
             case Handler::EVENT_PICKER:
@@ -290,6 +293,9 @@ bool GameScreen::processHandlers()
                     success = true;
                     sudoku_->setInitialStateBoard();
                 }
+                listButtons[0]->setEnabled(true);
+                listButtons[3]->setEnabled(true);
+                listButtons[4]->setEnabled(true);
                 break;
                 
             case Handler::EVENT_RENDER:
@@ -366,6 +372,9 @@ bool GameScreen::handleDifficulty( int difficulty)
             isPlaying_ = true;
             currentDifficulty = DIFFICULTY_CUSTOM;
             success = true;
+            listButtons[0]->setEnabled(false);
+            listButtons[3]->setEnabled(false);
+            listButtons[4]->setEnabled(false);
             break;
     }
     
