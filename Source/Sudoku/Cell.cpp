@@ -15,7 +15,7 @@ Cell::Cell(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int r
 {
     setValues(renderer, font, x, y, size, row, col);
 }
-
+// Set cell values
 void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int size, int row, int col)
 {
     this->renderer_ = renderer;
@@ -27,6 +27,7 @@ void Cell::setValues(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int s
     this->coords_.setCol(col);
 }
 
+// render cell
 void Cell::render(bool modeVerify, int value)
 {
     SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, size_, size_ };
@@ -48,7 +49,7 @@ void Cell::render(bool modeVerify, int value)
     }
     else SDL_SetRenderDrawColor( renderer_, 0xFF, 0xFF, 0xFF, 0xFF );
     SDL_RenderFillRect( renderer_, &fillRect );
-    
+    // render value
     if(value_!=0){
         SDL_Color textColor = { 0, 0, 0, 0xFF };
         loadFromRenderedText( std::to_string(value_) , textColor );
@@ -59,7 +60,7 @@ void Cell::render(bool modeVerify, int value)
     
 }
 
-
+// Texture cell text
 bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
 {
     //Get rid of preexisting texture
@@ -75,12 +76,6 @@ bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
         {
             printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
         }
-        else
-        {
-            //Get image dimensions
-            //mWidth = textSurface->w;
-            //mHeight = textSurface->h;
-        }
         
         //Get rid of old surface
         SDL_FreeSurface( textSurface );
@@ -90,11 +85,11 @@ bool Cell::loadFromRenderedText( std::string textureText, SDL_Color textColor )
         printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
     }
     
-    
     //Return success
     return mTexture != NULL;
 }
 
+// handles cell input
 bool Cell::handleFocusEvent(SDL_Event* e, bool isCustom)
 {
     if( isBlocked_ && !isCustom) return false;
@@ -136,7 +131,7 @@ bool Cell::handleFocusEvent(SDL_Event* e, bool isCustom)
     return false;
 }
 
-
+// free cell
 void Cell::free()
 {
     //Free texture if it exists
@@ -145,8 +140,8 @@ void Cell::free()
         SDL_DestroyTexture( mTexture );
         mTexture = NULL;
     }
-  }
-
+}
+// reset cell
 void Cell::reset()
 {
     //Free texture if it exists
@@ -161,15 +156,14 @@ void Cell::reset()
     possibleValues_.reset();
 }
 
-
-
+// Cell state setters
 void Cell::setFocused(bool state){ isFocused_ = state;}
 
 void Cell::setBlocked(bool isBlocked){ isBlocked_ = isBlocked; }
 
 
-// Game Logic Funtions
-
+// Game Logic Funtions for puzzle solving
+// sets cell value for only possibility
 int Cell::fixValue()
 {
     if( possibleValues_.count()!=8) return false;
@@ -182,7 +176,6 @@ int Cell::fixValue()
     return -1;
 }
 
-
 //  Setters
 void Cell::setFocus(bool isFocused){ this->isFocused_ = isFocused; }
 
@@ -194,9 +187,9 @@ void Cell::setCoordinates(int row, int col)
 
 void Cell::setValue(int value){ value_=value; }
 
-void Cell::setValuePossibility(std::bitset<9> possibleValues) { possibleValues_=possibleValues; }
+void Cell::setValuePossibility(std::bitset<9> possibleValues) { possibleValues_=possibleValues; } // sets cells possible values
 
-bool Cell::setValuePossibility(int value, bool valid) {
+bool Cell::setValuePossibility(int value, bool valid) {  // sets a single value for validity
     bool wasFalse = false;
     if(!possibleValues_[value-1]) wasFalse=true;
     possibleValues_[value-1]=valid;

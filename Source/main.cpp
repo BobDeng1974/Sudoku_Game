@@ -14,9 +14,12 @@ const int SCREEN_HEIGHT = 100;
 #include "ResolutionScreen.hpp"
 
 
-int main(int argc, const char * argv[]) {
+int main(int argc, const char * argv[])
+{
     
     bool success = false;
+    
+    // Init SDL
     if(SDL_Init(SDL_INIT_VIDEO) <0){
         std::cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << std::endl;
         success = false;
@@ -33,27 +36,29 @@ int main(int argc, const char * argv[]) {
     //Create Resolution Screen
     ResolutionScreen* resScreen = new ResolutionScreen(SCREEN_WIDTH, SCREEN_HEIGHT);
     
+    // Initiate Screen for resolution selection
     if( resScreen->init() ){
         success = resScreen->start();
     }
     
-    if( success){
+    // If user selected resolution
+    if(success){
         int width;
         int height;
+        // Get chosen resolution and delete Screen
         resScreen->getResolution( width, height);
         delete resScreen;
         
         // Create Game Screen
         GameScreen gameScreen (width, height);
-        
+        // Init and start game
         if( gameScreen.init() ){
             gameScreen.start();
         }
 
     }
-    
+    // Quit SDL
     SDL_Quit();
 
-    
     return 0;
 }

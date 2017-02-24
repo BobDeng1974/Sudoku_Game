@@ -14,23 +14,26 @@ SudokuSolver::SudokuSolver( int boardWidth, int boardHeight)
     this->boardHeight_ = boardHeight;
 }
 
+// Solves puzzle
 std::vector<Cell>  SudokuSolver::solvePuzzle( std::vector<Cell> &board)
 {
     solution_ = board;
 
+    // Computes initial board state
     computeInitialBoardState();
 
-    
+    // Cycles through queue with cells with fixed value
     while (!cellToBeSolved.empty())
     {
+        // Pops cell
         Coordinates coords = cellToBeSolved.front();
         cellToBeSolved.pop();
         
-        std::cout << "Viewing (" << coords.getRow() << "," << coords.getCol() << ") . missing " << cellToBeSolved.size() << std::endl;
-        
+        //std::cout << "Viewing (" << coords.getRow() << "," << coords.getCol() << ") . missing " << cellToBeSolved.size() << std::endl;
+        // Update neighbour cells on their possible values
         updateCells(coords.getRow(),coords.getCol(), solution_[ (coords.getRow()*9) + coords.getCol()].getValue() );
    
-        std::cout << "     A   B   C   D   E   F   G   H   I  " << std::endl;
+        /*std::cout << "     A   B   C   D   E   F   G   H   I  " << std::endl;
         std::cout << "   +---+---+---+---+---+---+---+---+---+" << std::endl;
         
         int cellvalue;
@@ -47,11 +50,12 @@ std::vector<Cell>  SudokuSolver::solvePuzzle( std::vector<Cell> &board)
             }
             std::cout << std::endl;
             std::cout << "   +---+---+---+---+---+---+---+---+---+" << std::endl;
-        }
+        }*/
     }
-
+    // "Brute Force" Algorithm for puzzle solving
     searchAlgorithm();
     
+    // prints puzzle solution
     std::cout << "     A   B   C   D   E   F   G   H   I  " << std::endl;
     std::cout << "   +---+---+---+---+---+---+---+---+---+" << std::endl;
     
@@ -71,12 +75,10 @@ std::vector<Cell>  SudokuSolver::solvePuzzle( std::vector<Cell> &board)
         std::cout << "   +---+---+---+---+---+---+---+---+---+" << std::endl;
     }
     
-
-    
     return solution_;
 }
 
-
+// Computes initial board state, i.e. cell possible values, adds final cells to queue
 bool SudokuSolver::computeInitialBoardState(){
     
     // Compute the bitset possibilities for each row
@@ -125,7 +127,7 @@ bool SudokuSolver::computeInitialBoardState(){
     return true;
 }
 
-
+// Updates neighbour cells with value. Removes value possibility from them
 bool SudokuSolver::updateCells( int row, int col, int value)
 {
     // Compute the bitset possibilities for each row
@@ -167,7 +169,7 @@ bool SudokuSolver::updateCells( int row, int col, int value)
     return true;
 }
 
-
+// Gets the state of a line
 std::bitset<9> SudokuSolver::getHorizontalState(int row) const
 {
     std::bitset<9> lineState;
@@ -178,7 +180,7 @@ std::bitset<9> SudokuSolver::getHorizontalState(int row) const
     }
     return lineState;
 }
-
+// Gets state of column
 std::bitset<9> SudokuSolver::getVerticalState(int col) const
 {
     std::bitset<9> lineState;
@@ -189,7 +191,7 @@ std::bitset<9> SudokuSolver::getVerticalState(int col) const
     }
     return lineState;
 }
-
+// Gets state of block (3x3)
 std::bitset<9> SudokuSolver::getBlockState(int row, int col) const
 {
     std::bitset<9> lineState;
@@ -202,7 +204,7 @@ std::bitset<9> SudokuSolver::getBlockState(int row, int col) const
     }
     return lineState;
 }
-
+// Verifies if a value has only a possible cell in a block
 Coordinates* SudokuSolver::verifyIfOnlyPoss(int blockRow, int blockCol, int value) const
 {
     int row=-1,col=-1;
@@ -219,8 +221,7 @@ Coordinates* SudokuSolver::verifyIfOnlyPoss(int blockRow, int blockCol, int valu
     return new Coordinates(row,col);
 }
 
-
-
+// Brute force algorithm for puzzle solving
 void SudokuSolver::searchAlgorithm(){
     int remain=0;
     for(int i=0; i< (boardWidth_*boardHeight_); i++){
@@ -237,19 +238,20 @@ void SudokuSolver::searchAlgorithm(){
     searchRecursive( solution_ , remain, true , Coordinates(0,0));
 }
 
-
+// Algorithms recursive
 bool SudokuSolver::searchRecursive( std::vector<Cell> curr_board , int remain, bool first, Coordinates coords){
-    
+    // if remain 0 == completed, copy content to solution array
     if(remain==0){
         for(int i=0; i < (boardWidth_*boardHeight_) ; i++){
             solution_[i] = curr_board[i];
         }
         return true;
     }
+    // if not the first insertion updates the board on chosen fixed cell value
     if(!first){
         int value = curr_board[(9*coords.getRow())+coords.getCol()].getValue();
         
-        std::cout << "Updating (" << coords.getRow() << "," << coords.getCol() << ") with " << value << " ... missing" << remain << std::endl;
+        //std::cout << "Updating (" << coords.getRow() << "," << coords.getCol() << ") with " << value << " ... missing" << remain << std::endl;
         
         for(int i=0; i< boardWidth_; i++){
             if( curr_board[(9*coords.getRow())+i].getValue()==0){
@@ -276,7 +278,7 @@ bool SudokuSolver::searchRecursive( std::vector<Cell> curr_board , int remain, b
         
     }
     
-    
+    // After updating , find cell with least number of possible values
     std::size_t min = 9;
     Coordinates coords_new;
     for(int i=0; i< boardWidth_; i++){
@@ -293,6 +295,7 @@ bool SudokuSolver::searchRecursive( std::vector<Cell> curr_board , int remain, b
         }
     }
     
+    // Try every single value of chosen cell
     int row =coords_new.getRow();
     int col =coords_new.getCol();
     std::bitset<9> cellPoss = curr_board[(row*9)+col].getPossibleValues();

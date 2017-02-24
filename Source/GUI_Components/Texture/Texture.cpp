@@ -31,6 +31,7 @@ Texture::~Texture(){
     free();
 };
 
+// Creates Texture from files, Can colorkey
 bool Texture::loadFromFile(std::string path, bool hasColorkey, uint8_t red , uint8_t green , uint8_t blue )
 {
     
@@ -73,7 +74,7 @@ bool Texture::loadFromFile(std::string path, bool hasColorkey, uint8_t red , uin
     return mTexture_ != NULL;
 }
 
-
+// Load text texture
 bool Texture::loadFromRenderedText( std::string textureText, SDL_Color textColor )
 {
     //Get rid of preexisting texture
@@ -113,6 +114,7 @@ bool Texture::loadFromRenderedText( std::string textureText, SDL_Color textColor
     return mTexture_ != NULL;
 }
 
+// Render Texture
 void Texture::render( int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip )
 {
     //Set rendering space and render to screen
@@ -130,7 +132,7 @@ void Texture::render( int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 }
 
 
-
+// Setters for modes
 void Texture::setBlendMode(SDL_BlendMode blending)
 {
     //Set blending function
@@ -149,6 +151,7 @@ void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
     SDL_SetTextureColorMod( mTexture_, red, green, blue );
 };
 
+// Free texture
 void Texture::free()
 {
     //Free texture if it exists

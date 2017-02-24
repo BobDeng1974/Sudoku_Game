@@ -16,10 +16,10 @@ class Coordinates
     public:
         Coordinates();
         Coordinates(int row,int col);
-    
+        // Getters
         int getRow();
         int getCol();
-    
+        // Setters
         void setRow(int row);
         void setCol(int col);
     

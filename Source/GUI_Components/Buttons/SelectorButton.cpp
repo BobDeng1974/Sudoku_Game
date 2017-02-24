@@ -20,6 +20,7 @@ SelectorButton::SelectorButton(SDL_Renderer* renderer, TTF_Font* font, int x, in
     this->type_ = type;
 }
 
+// Handles input events, inserts button specific int
 Handler SelectorButton::handleEvent(SDL_Event *e)
 {
     // return Handler set from inherited class

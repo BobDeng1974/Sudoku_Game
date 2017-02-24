@@ -15,11 +15,13 @@ Font::Font( std::string path)
 
 Font::~Font()
 {
+    // Delete all fonts created
     for (auto it=fonts_.begin(); it!=fonts_.end(); ++it){
         TTF_CloseFont( it->second );
     }
 }
 
+// Create Font with size
 bool Font::createSizedFont(int size)
 {
     // return bool
@@ -34,7 +36,7 @@ bool Font::createSizedFont(int size)
     }
     return success;
 }
-
+// Getter for font with size
 TTF_Font* Font::getFont(int size)
 {
     if(fonts_.find(size) == fonts_.end()) return nullptr;

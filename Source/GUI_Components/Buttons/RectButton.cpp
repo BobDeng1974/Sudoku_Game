@@ -16,7 +16,7 @@ RectButton::RectButton(SDL_Renderer* renderer, TTF_Font* font, int x, int y, int
     this->height_ = height;
 }
 
-
+// Handles mouse events
 Handler RectButton::handleEvent(SDL_Event *e)
 {
     // return Handler
@@ -61,6 +61,7 @@ Handler RectButton::handleEvent(SDL_Event *e)
             handler.setEvent(event_);
         }
     }
+    // If it isn't a toggle button, on mouse up, deselect
     if( !hasToggleCapacity_){
         if (e->type == SDL_MOUSEBUTTONUP) {
             isClicked_=false;
@@ -70,25 +71,29 @@ Handler RectButton::handleEvent(SDL_Event *e)
     return handler;
 }
 
+// resets button state
 void RectButton::reset()
 {
     isClicked_=false;
 }
 
+// Renders button
 void RectButton::render()
 {
     if( !isVisible_) return;
     
+    // render inside
     SDL_Rect fillRect = { anchorPoint_.x, anchorPoint_.y, width_, height_ };
     if( isClicked_)SDL_SetRenderDrawColor( renderer_, 0xCC, 0xCC, 0xCC, 0xFF );
     else SDL_SetRenderDrawColor( renderer_, 0xE5, 0xE5, 0xE5, 0xFF );
     SDL_RenderFillRect( renderer_, &fillRect );
     
-    //Render green outlined quad
+    //Render border
     SDL_Rect outlineRect = { anchorPoint_.x, anchorPoint_.y, width_, height_ };
     SDL_SetRenderDrawColor( renderer_, 0x00, 0x00, 0x00, 0xFF );
     SDL_RenderDrawRect( renderer_, &outlineRect );
 
+    // render text
     if(texture_!=nullptr)
         texture_->render( anchorPoint_.x + (width_ - texture_->getWidth())/2, anchorPoint_.y + (height_ - texture_->getHeight())/2);
 

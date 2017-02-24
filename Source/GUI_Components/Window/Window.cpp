@@ -30,10 +30,11 @@ Window::~Window()
     if( isTTFActive_)TTF_Quit();
 }
 
+// Initializes window
 bool Window::init()
 {
     bool success = true;
-    
+    // Creates window
     window_ = SDL_CreateWindow(title.c_str(), SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screenWidth_, screenHeight_, SDL_WINDOW_SHOWN);
     if(window_==nullptr){
         std::cerr <<  "Window could not be created! SDL_Error: "<< SDL_GetError() << std::endl;
@@ -58,20 +59,20 @@ bool Window::init()
     return success;
 }
 
-
+// Clears Window
 void Window::clearScreen()
 {
     //Clear screen
     SDL_SetRenderDrawColor( renderer_, bgR_, bgG_, bgB_, 0xFF );
     SDL_RenderClear( renderer_ );
 }
-
+// Updates Screen
 void Window::updateScreen()
 {
     //Update screen
     SDL_RenderPresent( renderer_ );
 }
-
+// Initializes PNG Support
 bool Window::initPNG()
 {
     if (isPNGActive_)return true;
@@ -84,7 +85,7 @@ bool Window::initPNG()
     isPNGActive_=true;
     return true;
 }
-
+// Initializes TTF support
 bool Window::initTTF()
 {
     if( isTTFActive_) return true;
@@ -98,6 +99,7 @@ bool Window::initTTF()
     return true;
 }
 
+// Getter for the renderer
 SDL_Renderer* Window::getRenderer() const { return renderer_; }
 
 

@@ -50,6 +50,7 @@ bool SaveFile::readFile()
     return success;
 }
 
+// Write save file
 bool SaveFile::writeFile()
 {
     bool success = true;
@@ -70,12 +71,13 @@ bool SaveFile::writeFile()
     return success;
 }
 
-
+// Increment difficulty's number of solved puzzles
 void SaveFile::incrementIndex(int index)
 {
     if( index < DATA_SIZE) data_[index]++;
 }
 
+// Getter for difficulty's number of solved puzzles
 Sint32 SaveFile::getIndexValue(int index) const
 {
     if( index < DATA_SIZE) return data_[index];

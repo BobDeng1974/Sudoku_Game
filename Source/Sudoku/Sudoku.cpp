@@ -25,11 +25,11 @@ Sudoku::Sudoku(SDL_Renderer* renderer, TTF_Font* font, int screenWidth, int scre
     
     createBoard();
     
-    unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+    auto seed = std::chrono::system_clock::now().time_since_epoch().count();
     generator_ = new std::minstd_rand0(seed);
 }
 
-
+// Creates the board
 void Sudoku::createBoard()
 {
     int ydividerSpace = 0;
@@ -44,9 +44,10 @@ void Sudoku::createBoard()
     }
 }
 
-
+// Renders the board
 void Sudoku::render(bool modeVerify)
 {
+    // Render each cell
     for (int i=0; i<horizontalCellNo; i++){
         for (int j=0; j<verticalCellNo; j++){
             if(isCustomMode())
@@ -106,7 +107,7 @@ void Sudoku::render(bool modeVerify)
     }
 }
 
-
+// Handle board events
 Handler Sudoku::handleEvent(SDL_Event *e)
 {
     // return Handler
@@ -146,7 +147,7 @@ Handler Sudoku::handleEvent(SDL_Event *e)
             }
         }
     }
-    else if( e->type == SDL_KEYDOWN )
+    else if( e->type == SDL_KEYDOWN ) // input events, only affect focused cell
     {
         if( focusedCell!=nullptr){
             handleInputEvent(e);
@@ -156,6 +157,7 @@ Handler Sudoku::handleEvent(SDL_Event *e)
     return handler;
 }
 
+// Handles input events on focused cell
 void Sudoku::handleInputEvent( SDL_Event* e)
 {
     Coordinates coords = focusedCell->getCoordinates();
@@ -201,28 +203,28 @@ void Sudoku::handleInputEvent( SDL_Event* e)
             focusedCell->setBlocked(false);
             break;
     }
-
 }
-
+// Updates Cell value, permissions depend on active modes
 void Sudoku::updateCellValue(int row, int col, int value)
 {
     
-    if( easyMode_){
+    if( easyMode_){ // Allows only if value is possible
         if( isValidInsertion( row, col, value))
             focusedCell->setValue( value );
     }
-    else focusedCell->setValue(value);
+    else focusedCell->setValue(value); // Allows any value
     
-    if( customMode_) focusedCell->setBlocked(true);
+    if( customMode_) focusedCell->setBlocked(true); // If custom input is considered part of puzzle configuration
 }
 
-
+// Build board from file
 bool Sudoku::buildFromFile( std::string path)
 {
     std::ifstream f_input;
     f_input.open(path);
     if (!f_input.is_open()) return false;
     
+    // Read line by line
     std::string line;
     while ( std::getline(f_input,line) ) {
         std::stringstream ss(line);
@@ -234,7 +236,7 @@ bool Sudoku::buildFromFile( std::string path)
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
         ss >> value;
         if(ss.fail() || (ss.peek()!=' ' && !ss.eof() && ss.peek()!='\t') ) hasFailed=true;
-        if(!insertCellValue(row - '1',  col - 'A', value - '0')){
+        if(!insertCellValue(row - '1',  col - 'A', value - '0')){ // Confirms input is valid
             return false;
         }
     }
@@ -244,7 +246,7 @@ bool Sudoku::buildFromFile( std::string path)
     return true;
 }
 
-
+// Inserts cell value if is valid
 bool Sudoku::insertCellValue(int row, int col, int value)
 {
     if(!isValidInsertion(row, col, value)) return false;
@@ -253,16 +255,18 @@ bool Sudoku::insertCellValue(int row, int col, int value)
     return true;
 }
 
+// Verifies if a value insertion is valid according to sudoku rules
 bool Sudoku::isValidInsertion(int row, int col, int value) const
 {
+    // verifies column
     for(int i=0; i< horizontalCellNo; i++){
         if( board_[(row*9)+i].getValue()==value) return false;
     }
-    
+    // verifies rows
     for(int i=0; i< verticalCellNo; i++){
         if( board_[(i*9)+col].getValue()==value) return false;
     }
-    
+    // verifies block
     for(int i = (row/3)*3; i < (((row/3)+1)*3); i++){
         for( int j = (col/3)*3;  j < ((col/3)+1)*3; j++){
             if( board_[(i*9)+j].getValue()==value) return false;
@@ -271,7 +275,7 @@ bool Sudoku::isValidInsertion(int row, int col, int value) const
     return true;
 }
 
-
+// Call for solving sudoku
 bool Sudoku::solveSudoku()
 {
     SudokuSolver solver(9, 9);
@@ -279,7 +283,7 @@ bool Sudoku::solveSudoku()
     return true;
 }
 
-
+// Reset sudoku to initial state or completly if eraseAll
 void Sudoku::reset( bool eraseAll)
 {
     for (int i=0; i<9; i++){
@@ -293,7 +297,7 @@ void Sudoku::reset( bool eraseAll)
     }
     
 }
-
+// Function for Hint, shows and blocks a cell
 void Sudoku::showAndBlockCell()
 {
     int missing= getNoEmptyBlock();
@@ -312,7 +316,7 @@ void Sudoku::showAndBlockCell()
         }
     }
 }
-
+// Blocks the whole board, when puzzle is correct and finished
 void Sudoku::blockBoard()
 {
     for(std::size_t i = 0; i < board_.size(); i++){
@@ -321,6 +325,7 @@ void Sudoku::blockBoard()
     }
 }
 
+// getter for number of missing cells
 int Sudoku::getNoEmptyBlock() const
 {
     int missing=0;
@@ -329,7 +334,7 @@ int Sudoku::getNoEmptyBlock() const
             missing++;
     return missing;
 }
-
+// verifies if puzzle is correct
 bool Sudoku::isAllCorrect() const
 {
     bool success = true;
@@ -338,8 +343,6 @@ bool Sudoku::isAllCorrect() const
             success=false;
     return success;
 }
-
-
 
 // Setters
 void Sudoku::setEasyMode(bool easyMode) { easyMode_ = easyMode; }

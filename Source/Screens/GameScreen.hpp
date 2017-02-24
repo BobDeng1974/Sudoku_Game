@@ -101,6 +101,7 @@ class GameScreen
         // Current Difficulty
         Difficulty currentDifficulty;
     
+        // Updates buttons text
         void updateButtonText( GameScreen::Difficulty difficulty);
     
     

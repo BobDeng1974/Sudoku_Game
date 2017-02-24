@@ -39,10 +39,11 @@ class RectButton : public Button
         int width_;
         int height_;
     
+        // Indicates if button was clicked
         bool isClicked_ = false;
-    
+        // indicates is it should toggle
         bool hasToggleCapacity_ = false;
-    
+        // indicates event to be pushed on clicked
         Handler::Event event_ = Handler::EVENT_IGNORE;
   
 };

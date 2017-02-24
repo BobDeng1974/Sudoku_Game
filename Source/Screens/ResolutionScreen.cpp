@@ -24,11 +24,11 @@ ResolutionScreen::~ResolutionScreen()
     renderer_=nullptr;
     window_=nullptr;
 }
-
+// Screen's main function
 bool ResolutionScreen::start()
 {
     bool success = false;
-    
+    // Initialize components
     if( !hasInitiated) return success;
     render();
     
@@ -143,7 +143,7 @@ bool ResolutionScreen::processHandlers()
         
         switch (handler.getEvent())
         {
-            case Handler::EVENT_PICKER:
+            case Handler::EVENT_PICKER: // Save user's selection
                 switch(handler.getIntExtra()){
                     case 1:
                         chosenWidth_=640;
@@ -168,7 +168,7 @@ bool ResolutionScreen::processHandlers()
     return success;
 }
 
-
+// Render screen
 void ResolutionScreen::render()
 {
     // Clear window
@@ -181,7 +181,7 @@ void ResolutionScreen::render()
     window_->updateScreen();
 }
 
-
+// Getter for user selection
 void ResolutionScreen::getResolution(int &width, int &height) const
 {
     width = chosenWidth_;

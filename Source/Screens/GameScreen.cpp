@@ -14,8 +14,10 @@ GameScreen::GameScreen(int windowWidth, int windowHeight)
     this->windowHeight_ = windowHeight;
 }
 
+// Screen main function
 void GameScreen::start()
 {
+    // Initialize elements
     if( !hasInitiated) return;
     render();
     
@@ -40,11 +42,12 @@ void GameScreen::start()
                     for( Button* button: listButtons) handlerQueue_.push(button->handleEvent(&e));
                 }
                 else{
+                    // Is selecting difficulty
                     for( Button* button: difficultyPickerButtons_) handlerQueue_.push(button->handleEvent(&e));
                 }
             }
         }
-        // Process queue of handlers
+        // Process queue of handlers and see if required update window
         update = processHandlers();
         if( update){
             render();
@@ -75,6 +78,7 @@ bool GameScreen::init()
         std::cerr << " Failed to load font\n";
         success = false;
     }
+    // Creates different sized fonts
     font_->createSizedFont(24);
     font_->createSizedFont(20);
     font_->createSizedFont(16);
@@ -90,10 +94,11 @@ bool GameScreen::init()
             std::cerr << "Failed to load Buttons\n";
             success = false;
         }
-        
+        // Create text
         pickingText_ = new Texture(renderer_,font_->getFont(24));
         pickingText_->loadFromRenderedText("Choose the difficulty:", textColor_);
         
+        // Create sudoku
         sudoku_ = new Sudoku( renderer_, font_->getFont(28), windowWidth_,windowHeight_);
         hasInitiated=true;
     }
@@ -206,8 +211,6 @@ bool GameScreen::loadButtons(){
     doneButton = newButton;
     listButtons.push_back(newButton);
     
-    
-    
     return true;
 }
 
@@ -223,12 +226,12 @@ bool GameScreen::processHandlers()
     
         switch (handler.getEvent())
         {
-            case Handler::EVENT_VERIFY:
+            case Handler::EVENT_VERIFY: //set toggle verify mode
                 isVerify_ = !isVerify_;
                 success = true;
                 break;
                 
-            case Handler::EVENT_INPUT:
+            case Handler::EVENT_INPUT: // Set for update screen and verify is finished
                 if( sudoku_->getNoEmptyBlock()==0 && sudoku_->isAllCorrect() && !isFinished){
                     sudoku_->blockBoard();
                     isFinished=true;
@@ -238,7 +241,7 @@ bool GameScreen::processHandlers()
                 success = true;
                 break;
                 
-            case Handler::EVENT_RESET:
+            case Handler::EVENT_RESET: // resets board
                 sudoku_->reset(false);
                 //sudoku_->buildFromFile(filename_);
                 for( Button* button: listButtons) button->reset();
@@ -246,7 +249,7 @@ bool GameScreen::processHandlers()
                 isFinished=false;
                 break;
                 
-            case Handler::EVENT_NEWGAME:
+            case Handler::EVENT_NEWGAME: // opens difficulty selection menu
                 sudoku_->reset(true);
                 isPlaying_ = false;
                 listButtons[0]->setEnabled(true);
@@ -254,14 +257,14 @@ bool GameScreen::processHandlers()
                 listButtons[4]->setEnabled(true);
                 break;
                 
-            case Handler::EVENT_PICKER:
+            case Handler::EVENT_PICKER: // User has picked difficulty
                 if( !isPlaying_){
                     success = handleDifficulty( handler.getIntExtra());
                     isFinished=false;
                 }
                 break;
                 
-            case Handler::EVENT_HINT:
+            case Handler::EVENT_HINT: // User asked for hiny
                 if(hintNo > 0){
                     sudoku_->showAndBlockCell();
                     success=true;
@@ -275,16 +278,16 @@ bool GameScreen::processHandlers()
                 }
                 break;
                 
-            case Handler::EVENT_EASY:
+            case Handler::EVENT_EASY: // Toggle easymode
                 if( !sudoku_->isCustomMode()) sudoku_->setEasyMode( !sudoku_->isEasyMode());
                 success = true;
                 break;
                 
-            case Handler::EVENT_CUSTOM:
-                doneButton->setEnabled(false);
-                doneButton->setVisibility(false);
+            case Handler::EVENT_CUSTOM: // User has finished creating board
+                
                 if(!sudoku_->solveSudoku()){
                     std::cerr << "impossible Sudoku configuration!\n";
+                    sudoku_->reset( true);
                 }
                 else{
                     sudoku_->setEasyMode(false);
@@ -292,6 +295,8 @@ bool GameScreen::processHandlers()
                     isPlaying_=true;
                     success = true;
                     sudoku_->setInitialStateBoard();
+                    doneButton->setEnabled(false);
+                    doneButton->setVisibility(false);
                 }
                 listButtons[0]->setEnabled(true);
                 listButtons[3]->setEnabled(true);
@@ -309,7 +314,7 @@ bool GameScreen::processHandlers()
     return success;
 }
 
-
+// Render screen
 void GameScreen::render()
 {
     // Clear window
@@ -331,13 +336,11 @@ void GameScreen::render()
     window_->updateScreen();
 }
 
+// Difficulty selected
 bool GameScreen::handleDifficulty( int difficulty)
 {
     // Return boolean
     bool success = false;
-    
-    // TODO Refactor into function
-    
     
     switch (difficulty) {
         case DIFFICULTY_EASY:
@@ -381,10 +384,12 @@ bool GameScreen::handleDifficulty( int difficulty)
     return success;
 }
 
+// Loads puzzle from path dependant on difficulty
 void GameScreen::loadPuzzle(GameScreen::Difficulty difficulty, std::string path)
 {
+    // selects one of the 4 available puzzles
     int index = (saveFile_->getIndexValue(difficulty)%4 )+1 ;
-    
+    // Loads board from file
     std::string filename = path;
     filename.append( std::to_string(index));
     filename.append(".txt");
@@ -393,6 +398,7 @@ void GameScreen::loadPuzzle(GameScreen::Difficulty difficulty, std::string path)
     isPlaying_ = true;
 }
 
+// Defines difficulty selector button text
 void GameScreen::updateButtonText(GameScreen::Difficulty difficulty)
 {
     std::string buttonName;

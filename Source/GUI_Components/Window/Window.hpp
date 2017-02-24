@@ -35,13 +35,12 @@ class Window
         SDL_Renderer* getRenderer() const;
     
     protected:
+        // Initialisers for support frameworks
         bool initPNG();
         bool initTTF();
-
-
-    
     
     private:
+        // Window Variables for size and background
         int screenWidth_;
         int screenHeight_;
         int bgR_;
@@ -49,10 +48,9 @@ class Window
         int bgB_;
         std::string title;
     
+        // Window
         SDL_Window* window_ = nullptr;
-    
-        TTF_Font * font_ = NULL;
-
+        // Renderer
         SDL_Renderer* renderer_ = nullptr;
 
         // support libraries booleans
